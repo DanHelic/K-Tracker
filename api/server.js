@@ -14,7 +14,7 @@ app.use(express.json());
  *       200:
  *         description: Returns Hello message
  */
-app.get("/hello", (req, res) => {
+app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from API!!!" });
 });
 
@@ -28,7 +28,7 @@ app.get("/hello", (req, res) => {
  *      200:
  *        description: Returns all Users
 */
-app.get("/users", (req, res) => {
+app.get("/api/users", (req, res) => {
   res.json([
     { id: 1, name: "Alice" },
     { id: 2, name: "Bob" }
@@ -51,7 +51,7 @@ app.get("/users", (req, res) => {
  *      200:
  *        description: Returns the User with the specified id
 */
-app.get("/user/:id", (req, res) => {
+app.get("/api/user/:id", (req, res) => {
   const id = req.params.id;
   if(id==1) res.json([{name: "Tom1"}]);
   if(id==2) res.json([{name: "Jerry"}]);
@@ -78,7 +78,7 @@ const options = {
 
 const specs = swaggerJsdoc(options);
 
-app.use("/swagger", swaggerUi.serve, swaggerUi.setup(specs));
+app.use("/api/swagger", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.listen(3000, "127.0.0.1", () => {
   console.log("API running on port 3000");
