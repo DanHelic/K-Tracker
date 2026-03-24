@@ -1729,7 +1729,7 @@ export namespace Prisma {
   export type UserMinAggregateOutputType = {
     user_id: number | null
     user_name: string | null
-    password_hash: string | null
+    password: string | null
     email: string | null
     created_at: Date | null
     last_login: Date | null
@@ -1741,7 +1741,7 @@ export namespace Prisma {
   export type UserMaxAggregateOutputType = {
     user_id: number | null
     user_name: string | null
-    password_hash: string | null
+    password: string | null
     email: string | null
     created_at: Date | null
     last_login: Date | null
@@ -1753,7 +1753,7 @@ export namespace Prisma {
   export type UserCountAggregateOutputType = {
     user_id: number
     user_name: number
-    password_hash: number
+    password: number
     email: number
     created_at: number
     last_login: number
@@ -1775,7 +1775,7 @@ export namespace Prisma {
   export type UserMinAggregateInputType = {
     user_id?: true
     user_name?: true
-    password_hash?: true
+    password?: true
     email?: true
     created_at?: true
     last_login?: true
@@ -1787,7 +1787,7 @@ export namespace Prisma {
   export type UserMaxAggregateInputType = {
     user_id?: true
     user_name?: true
-    password_hash?: true
+    password?: true
     email?: true
     created_at?: true
     last_login?: true
@@ -1799,7 +1799,7 @@ export namespace Prisma {
   export type UserCountAggregateInputType = {
     user_id?: true
     user_name?: true
-    password_hash?: true
+    password?: true
     email?: true
     created_at?: true
     last_login?: true
@@ -1898,7 +1898,7 @@ export namespace Prisma {
   export type UserGroupByOutputType = {
     user_id: number
     user_name: string
-    password_hash: string
+    password: string
     email: string | null
     created_at: Date
     last_login: Date | null
@@ -1929,7 +1929,7 @@ export namespace Prisma {
   export type userSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     user_id?: boolean
     user_name?: boolean
-    password_hash?: boolean
+    password?: boolean
     email?: boolean
     created_at?: boolean
     last_login?: boolean
@@ -1944,7 +1944,7 @@ export namespace Prisma {
   export type userSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     user_id?: boolean
     user_name?: boolean
-    password_hash?: boolean
+    password?: boolean
     email?: boolean
     created_at?: boolean
     last_login?: boolean
@@ -1956,7 +1956,7 @@ export namespace Prisma {
   export type userSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     user_id?: boolean
     user_name?: boolean
-    password_hash?: boolean
+    password?: boolean
     email?: boolean
     created_at?: boolean
     last_login?: boolean
@@ -1968,7 +1968,7 @@ export namespace Prisma {
   export type userSelectScalar = {
     user_id?: boolean
     user_name?: boolean
-    password_hash?: boolean
+    password?: boolean
     email?: boolean
     created_at?: boolean
     last_login?: boolean
@@ -1977,7 +1977,7 @@ export namespace Prisma {
     is_admin?: boolean
   }
 
-  export type userOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"user_id" | "user_name" | "password_hash" | "email" | "created_at" | "last_login" | "first_name" | "last_name" | "is_admin", ExtArgs["result"]["user"]>
+  export type userOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"user_id" | "user_name" | "password" | "email" | "created_at" | "last_login" | "first_name" | "last_name" | "is_admin", ExtArgs["result"]["user"]>
   export type userInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     purchases?: boolean | user$purchasesArgs<ExtArgs>
     stores?: boolean | user$storesArgs<ExtArgs>
@@ -1995,7 +1995,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       user_id: number
       user_name: string
-      password_hash: string
+      password: string
       email: string | null
       created_at: Date
       last_login: Date | null
@@ -2429,7 +2429,7 @@ export namespace Prisma {
   interface userFieldRefs {
     readonly user_id: FieldRef<"user", 'Int'>
     readonly user_name: FieldRef<"user", 'String'>
-    readonly password_hash: FieldRef<"user", 'String'>
+    readonly password: FieldRef<"user", 'String'>
     readonly email: FieldRef<"user", 'String'>
     readonly created_at: FieldRef<"user", 'DateTime'>
     readonly last_login: FieldRef<"user", 'DateTime'>
@@ -10888,7 +10888,7 @@ export namespace Prisma {
   export const UserScalarFieldEnum: {
     user_id: 'user_id',
     user_name: 'user_name',
-    password_hash: 'password_hash',
+    password: 'password',
     email: 'email',
     created_at: 'created_at',
     last_login: 'last_login',
@@ -11089,7 +11089,7 @@ export namespace Prisma {
     NOT?: userWhereInput | userWhereInput[]
     user_id?: IntFilter<"user"> | number
     user_name?: StringFilter<"user"> | string
-    password_hash?: StringFilter<"user"> | string
+    password?: StringFilter<"user"> | string
     email?: StringNullableFilter<"user"> | string | null
     created_at?: DateTimeFilter<"user"> | Date | string
     last_login?: DateTimeNullableFilter<"user"> | Date | string | null
@@ -11103,7 +11103,7 @@ export namespace Prisma {
   export type userOrderByWithRelationInput = {
     user_id?: SortOrder
     user_name?: SortOrder
-    password_hash?: SortOrder
+    password?: SortOrder
     email?: SortOrderInput | SortOrder
     created_at?: SortOrder
     last_login?: SortOrderInput | SortOrder
@@ -11121,7 +11121,7 @@ export namespace Prisma {
     AND?: userWhereInput | userWhereInput[]
     OR?: userWhereInput[]
     NOT?: userWhereInput | userWhereInput[]
-    password_hash?: StringFilter<"user"> | string
+    password?: StringFilter<"user"> | string
     created_at?: DateTimeFilter<"user"> | Date | string
     last_login?: DateTimeNullableFilter<"user"> | Date | string | null
     first_name?: StringNullableFilter<"user"> | string | null
@@ -11134,7 +11134,7 @@ export namespace Prisma {
   export type userOrderByWithAggregationInput = {
     user_id?: SortOrder
     user_name?: SortOrder
-    password_hash?: SortOrder
+    password?: SortOrder
     email?: SortOrderInput | SortOrder
     created_at?: SortOrder
     last_login?: SortOrderInput | SortOrder
@@ -11154,7 +11154,7 @@ export namespace Prisma {
     NOT?: userScalarWhereWithAggregatesInput | userScalarWhereWithAggregatesInput[]
     user_id?: IntWithAggregatesFilter<"user"> | number
     user_name?: StringWithAggregatesFilter<"user"> | string
-    password_hash?: StringWithAggregatesFilter<"user"> | string
+    password?: StringWithAggregatesFilter<"user"> | string
     email?: StringNullableWithAggregatesFilter<"user"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"user"> | Date | string
     last_login?: DateTimeNullableWithAggregatesFilter<"user"> | Date | string | null
@@ -11570,7 +11570,7 @@ export namespace Prisma {
 
   export type userCreateInput = {
     user_name: string
-    password_hash: string
+    password: string
     email?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
@@ -11584,7 +11584,7 @@ export namespace Prisma {
   export type userUncheckedCreateInput = {
     user_id?: number
     user_name: string
-    password_hash: string
+    password: string
     email?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
@@ -11597,7 +11597,7 @@ export namespace Prisma {
 
   export type userUpdateInput = {
     user_name?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11611,7 +11611,7 @@ export namespace Prisma {
   export type userUncheckedUpdateInput = {
     user_id?: IntFieldUpdateOperationsInput | number
     user_name?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11625,7 +11625,7 @@ export namespace Prisma {
   export type userCreateManyInput = {
     user_id?: number
     user_name: string
-    password_hash: string
+    password: string
     email?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
@@ -11636,7 +11636,7 @@ export namespace Prisma {
 
   export type userUpdateManyMutationInput = {
     user_name?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11648,7 +11648,7 @@ export namespace Prisma {
   export type userUncheckedUpdateManyInput = {
     user_id?: IntFieldUpdateOperationsInput | number
     user_name?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -12119,7 +12119,7 @@ export namespace Prisma {
   export type userCountOrderByAggregateInput = {
     user_id?: SortOrder
     user_name?: SortOrder
-    password_hash?: SortOrder
+    password?: SortOrder
     email?: SortOrder
     created_at?: SortOrder
     last_login?: SortOrder
@@ -12135,7 +12135,7 @@ export namespace Prisma {
   export type userMaxOrderByAggregateInput = {
     user_id?: SortOrder
     user_name?: SortOrder
-    password_hash?: SortOrder
+    password?: SortOrder
     email?: SortOrder
     created_at?: SortOrder
     last_login?: SortOrder
@@ -12147,7 +12147,7 @@ export namespace Prisma {
   export type userMinOrderByAggregateInput = {
     user_id?: SortOrder
     user_name?: SortOrder
-    password_hash?: SortOrder
+    password?: SortOrder
     email?: SortOrder
     created_at?: SortOrder
     last_login?: SortOrder
@@ -13441,7 +13441,7 @@ export namespace Prisma {
 
   export type userCreateWithoutPurchasesInput = {
     user_name: string
-    password_hash: string
+    password: string
     email?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
@@ -13454,7 +13454,7 @@ export namespace Prisma {
   export type userUncheckedCreateWithoutPurchasesInput = {
     user_id?: number
     user_name: string
-    password_hash: string
+    password: string
     email?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
@@ -13500,7 +13500,7 @@ export namespace Prisma {
 
   export type userUpdateWithoutPurchasesInput = {
     user_name?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13513,7 +13513,7 @@ export namespace Prisma {
   export type userUncheckedUpdateWithoutPurchasesInput = {
     user_id?: IntFieldUpdateOperationsInput | number
     user_name?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -14017,7 +14017,7 @@ export namespace Prisma {
 
   export type userCreateWithoutStoresInput = {
     user_name: string
-    password_hash: string
+    password: string
     email?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
@@ -14030,7 +14030,7 @@ export namespace Prisma {
   export type userUncheckedCreateWithoutStoresInput = {
     user_id?: number
     user_name: string
-    password_hash: string
+    password: string
     email?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
@@ -14083,7 +14083,7 @@ export namespace Prisma {
 
   export type userUpdateWithoutStoresInput = {
     user_name?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -14096,7 +14096,7 @@ export namespace Prisma {
   export type userUncheckedUpdateWithoutStoresInput = {
     user_id?: IntFieldUpdateOperationsInput | number
     user_name?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

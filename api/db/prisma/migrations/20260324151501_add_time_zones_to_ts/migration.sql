@@ -1,0 +1,9 @@
+-- AlterTable
+ALTER TABLE "item" ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMPTZ;
+
+-- AlterTable
+ALTER TABLE "purchase" ALTER COLUMN "purchased_at" SET DATA TYPE TIMESTAMPTZ;
+
+-- AlterTable
+ALTER TABLE "user" ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMPTZ,
+ALTER COLUMN "last_login" SET DATA TYPE TIMESTAMPTZ;

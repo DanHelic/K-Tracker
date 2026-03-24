@@ -9,7 +9,7 @@ export class MyGenApi {
   constructor(private http: HttpClient) {}
 
   getData(){
-    let ret = this.http.get('/api/user/0');
+    let ret = this.http.get('/api/user/users');
     console.log(ret);
     return ret;
   }

@@ -11,10 +11,10 @@ datasource db {
 model user {
   user_id       Int       @id @default(autoincrement())
   user_name     String    @db.VarChar @unique
-  password_hash String    @db.VarChar 
+  password      String    @db.VarChar 
   email         String?   @db.VarChar @unique
-  created_at    DateTime  @default(now())
-  last_login    DateTime?
+  created_at    DateTime  @default(now()) @db.Timestamptz
+  last_login    DateTime? @db.Timestamptz
   first_name    String?   @db.VarChar
   last_name     String?   @db.VarChar
   is_admin      Boolean   @default(false)
@@ -26,7 +26,7 @@ model user {
 model purchase {
   purchase_id   Int       @id @default(autoincrement())
   user_id       Int       
-  purchased_at  DateTime  
+  purchased_at  DateTime  @db.Timestamptz
   store_id      Int?
   total_price   Decimal   @db.Decimal(10,2) @default(0.00)
   item_count    Int       @default(0)
@@ -54,7 +54,7 @@ model item {
   value             Decimal         @db.Decimal(10,3)
   unit              String          @db.VarChar
   item_producer_id  Int?
-  created_at        DateTime        @default(now())
+  created_at        DateTime        @default(now()) @db.Timestamptz
 
   item_type         item_type?      @relation(fields: [item_type_id], references: [item_type_id])
   country           country?        @relation(fields: [country_id], references: [country_id])
