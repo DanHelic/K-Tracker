@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model user {
+  user_id       Int       @id @default(autoincrement())
+  user_name     String    @db.VarChar @unique
+  password_hash String    @db.VarChar 
+  email         String?   @db.VarChar @unique
+  created_at    DateTime  @default(now())
+  last_login    DateTime?
+  first_name    String?   @db.VarChar
+  last_name     String?   @db.VarChar
+  is_admin      Boolean   @default(false)
+
+  purchases     purchase[]
+  stores        store[]
+}
+
+model purchase {
+  purchase_id   Int       @id @default(autoincrement())
+  user_id       Int       
+  purchased_at  DateTime  
+  store_id      Int?
+  total_price   Decimal   @db.Decimal(10,2) @default(0.00)
+  item_count    Int       @default(0)
+
+  user          user      @relation(fields: [user_id], references: [user_id])
+  store         store?    @relation(fields: [store_id], references: [store_id])
+}
+
+model purchase_item {
+  purchase_item_id    Int       @id @default(autoincrement())
+  purchase_id         Int
+  item_id             Int?
+  item_total_price    Decimal   @db.Decimal(10,2)
+  amount              Int     
+  item_name           String?   @db.VarChar
+
+  item                item?     @relation(fields: [item_id], references: [item_id])
+}
+
+model item {
+  item_id           Int             @id @default(autoincrement())
+  name              String          @db.VarChar
+  item_type_id      Int?
+  country_id        Int?
+  value             Decimal         @db.Decimal(10,3)
+  unit              String          @db.VarChar
+  item_producer_id  Int?
+  created_at        DateTime        @default(now())
+
+  item_type         item_type?      @relation(fields: [item_type_id], references: [item_type_id])
+  country           country?        @relation(fields: [country_id], references: [country_id])
+  item_producer     item_producer?  @relation(fields: [item_producer_id], references: [item_producer_id])
+
+  purchaseItems     purchase_item[]
+}
+
+model item_producer {
+  item_producer_id    Int       @id @default(autoincrement())
+  item_producer_name  String    @db.VarChar @unique
+  country_id          Int?
+
+  country             country?  @relation(fields: [country_id], references: [country_id])
+
+  items               item[]
+}
+
+model item_type {
+  item_type_id    Int       @id @default(autoincrement())
+  item_type_name  String    @db.VarChar
+
+  items           item[]
+}
+
+model country {
+  country_id      Int       @id @default(autoincrement())
+  country_code    String    @db.VarChar @unique
+  name            String    @db.VarChar @unique
+
+  items           item[]
+  itemProducers   item_producer[]
+}
+
+model store {
+  store_id    Int       @id @default(autoincrement())
+  name        String    @db.VarChar
+  user_id     Int
+  location    String    @db.VarChar
+
+  user        user      @relation(fields: [user_id], references: [user_id])
+
+  purchases   purchase[]
+}
