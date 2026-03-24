@@ -17,12 +17,10 @@ export class Home implements OnInit{
   constructor(private api: MyGenApi, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    console.log("hey");
     this.api.getData().subscribe( res => {
       this.data = res;
       console.log(res);
       this.cdr.detectChanges();
     });
-    console.log("ho");
   }
 }

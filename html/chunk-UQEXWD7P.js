@@ -1,0 +1,1 @@
+import{Da as n,Ea as s,Ka as o,ta as i}from"./chunk-JIJ66BEY.js";var a=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=i({type:t,selectors:[["app-seite2"]],decls:2,vars:0,template:function(e,m){e&1&&(n(0,"p"),o(1,"seite2 works!"),s())},encapsulation:2})};export{a as Seite2};
