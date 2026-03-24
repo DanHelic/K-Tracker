@@ -1,14 +1,15 @@
-/*const express = require("express");
-const swaggerUi = require("swagger-ui-express");
-const swaggerJsdoc = require("swagger-jsdoc");*/
 import express from "express";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import argon2 from "argon2";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from './db/prisma/generated/client.js';
+const connectionString = `${process.env.DATABASE_URL}`;
+const adapter = new PrismaPg({ connectionString });
+const prisma = new PrismaClient({ adapter });
+
 const app = express();
 app.use(express.json());
-//const cors = require('cors');
-//app.use(cors());
 
 import { getUser } from './db/dbUser.js';
 
