@@ -3,6 +3,7 @@ import swaggerUi from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 //const swaggerJsDoc = require("swagger-jsdoc"); //alt fix
 import argon2 from "argon2";
+import { authMiddleware } from "./session/authMiddleWare.js";
 
 const app = express();
 app.use(express.json());
@@ -10,7 +11,7 @@ app.use(express.json());
 const router = express.Router();
 export default router;
 
-import { getAllUsers, getUserById, createUser, userNameAvailable, emailAvailable, checkPassword, changeUsername, changePassword, changeEmail } from './db/dbUser.js';
+import { getAllUsers, getUserById, createUser, userNameAvailable, emailAvailable, checkPassword, changeUsername, changePassword, changeEmail, setLastLogin, changeName, userIsAdmin } from './db/dbUser.js';
 
 /**
  * @swagger
@@ -61,12 +62,14 @@ import { getAllUsers, getUserById, createUser, userNameAvailable, emailAvailable
  *    tags:
  *      - user
  *    responses:
- *      200:
+ *      201:
  *        description: Returns all Users
  *      500:
  *        description: Internal error
 */
-router.get("/users", async (req, res) => {
+router.get("/users", authMiddleware, async (req, res) => {
+    // @ts-ignore
+    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
     const ret = await getAllUsers();
 
     if(ret.success) return res.status(201).json(ret.users);
@@ -77,16 +80,9 @@ router.get("/users", async (req, res) => {
 
 /** 
  * @swagger 
- * /user/user/{id}:
+ * /user/user:
  *  get:
- *    summary: Get the Name of a Single User
- *    parameters:
- *      - in: path
- *        name: id
- *        required: true
- *        schema:
- *          type: integer
- *        description: ID of the user
+ *    summary: Get information of the current user
  *    tags:
  *      - user
  *    responses:
@@ -95,9 +91,9 @@ router.get("/users", async (req, res) => {
  *      500:
  *        description: Internal error
 */
-router.get("/user/:id", async (req, res) => {
-    const id = parseInt(req.params.id, 10);
-    const ret = await getUserById(id);
+router.get("/user", authMiddleware, async (req, res) => {
+    // @ts-ignore
+    const ret = await getUserById(req.user.userId);
 
     if(ret.success) return res.status(201).json(ret.user);
     if(ret.code==null) return res.status(500).json({message: ret.message});
@@ -169,48 +165,6 @@ router.post("/createUser", async (req, res) => {
 });
 
 
-/**
- * @swagger
- * /user/login:
- *   post:
- *     summary: Login specified user
- *     tags: [user]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - user_name
- *               - password
- *             properties:
- *               user_name:
- *                 type: string
- *                 description: Username
- *               password:
- *                 type: string
- *                 description: password
- *     responses:
- *       201:
- *         description: Login successful
- *       401: 
- *         description: Password or username incorrect
- *       500:
- *         description: Internal error
- */
-router.post("/login", async (req, res) => {
-    const ret = await checkPassword(req.body.user_name, req.body.password);
-
-    //create and return token
-
-    if(ret.success) return res.status(201).json({message: "Login successful"});
-    if(ret.code==null) return res.status(500).json({message: ret.message});
-    return res.status(ret.code).json({message: ret.message});
-})
-
-
-
 //Patch-Endpoints
 /**
  * @swagger
@@ -250,7 +204,7 @@ router.post("/login", async (req, res) => {
  *       500:
  *         description: Internal error
  */
-router.patch("/changeUsername", async (req, res) => {
+router.patch("/changeUsername", authMiddleware, async (req, res) => {
     if (req.body.old_user_name==req.body.new_user_name) return res.status(400).json({message: "Old and New Username are the same"});
     const pwCheck = await checkPassword(req.body.old_user_name, req.body.password);
     if (!pwCheck.success) return res.status(401).json({message: "Password or username incorrect"});
@@ -301,7 +255,7 @@ router.patch("/changeUsername", async (req, res) => {
  *       500:
  *         description: Internal error
  */
-router.patch("/changePassword", async (req, res) => {
+router.patch("/changePassword", authMiddleware, async (req, res) => {
     if (req.body.old_password==req.body.new_password) return res.status(400).json({message: "Old and New Password are the same"});
     const pwCheck = await checkPassword(req.body.user_name, req.body.old_password);
     if (!pwCheck.success) return res.status(401).json({message: "Username or password incorrect"});
@@ -350,15 +304,56 @@ router.patch("/changePassword", async (req, res) => {
  *       500:
  *         description: Internal error
  */
-router.patch("/changeEmail", async (req, res) => {
+router.patch("/changeEmail", authMiddleware, async (req, res) => {
     const pwCheck = await checkPassword(req.body.user_name, req.body.password);
     if (!pwCheck.success) return res.status(401).json({message: "Username or password incorrect"});
     const eAvailable = await emailAvailable(req.body.new_email);
     if(!eAvailable) return res.status(409).json({message: "Email already in use"});
 
-    const ret = await changeEmail(req.body.user_name, req.body.old_email, req.body.new_email);
+    // @ts-ignore
+    const ret = await changeEmail(req.user.userId, req.body.old_email, req.body.new_email);
 
     if(ret.success) return res.status(201).json({message: "Email change successful"});
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+})
+
+
+/**
+ * @swagger
+ * /user/changeName:
+ *   patch:
+ *     summary: change of the first_name and last_name
+ *     tags: [user]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - new_first_name
+ *               - new_last_name
+ *             properties:
+ *               new_first_name:
+ *                 type: string
+ *                 description: new first name
+ *               new_last_name:
+ *                 type: string
+ *                 description: new last name
+ *     responses:
+ *       201:
+ *         description: Name change successful
+ *       401: 
+ *         description: Username not found
+ *       500:
+ *         description: Internal error
+ */
+router.patch("/changeName", authMiddleware, async (req, res) => {
+    // @ts-ignore
+    const ret = await changeName(req.user.userId, req.body.first_name, req.body.last_name);
+
+    if(ret.success) return res.status(201).json({message: "Name change successful"});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 })

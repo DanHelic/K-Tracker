@@ -12,8 +12,11 @@ const app: Application = express();
 app.use(express.json());
 
 import userRouter from "./user.js";
+import authRouter from "./auth.js";
 
 app.use("/api/user/", userRouter);
+app.use("/api/auth/", authRouter);
+
 
 /**
  * @swagger
@@ -35,7 +38,7 @@ app.use("/api/user/", userRouter);
  *         description: Returns Hello message
  */
 app.get("/api/hello", (req, res) => {
-  console.log("Loaded DB URL:", process.env.DATABASE_URL);
+  //console.log("Loaded DB URL:", process.env.DATABASE_URL);
   res.json({ message: "Hello from API!!!2" });
 });
 
@@ -48,6 +51,18 @@ const options = {
       version: "1.0.0",
       description: "API documentation",
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT"
+        }
+      }
+    },
+    security: [
+      { bearerAuth: [] }
+    ],
     servers: [
       {
         url: "/api",

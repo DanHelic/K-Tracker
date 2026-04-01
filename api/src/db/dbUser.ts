@@ -82,8 +82,13 @@ export async function createUser(user_name_: string, password_: string, email_: 
 export async function checkPassword(user_name_: string, password_: string){
   try{
     const user = await prisma.user.findFirst({
-      select: {password: true},
-      where: {user_name: user_name_}
+      select: {
+        password: true, 
+        user_id: true
+      },
+      where: {
+        user_name: user_name_
+      }
     });
 
     if(user==null){
@@ -91,7 +96,7 @@ export async function checkPassword(user_name_: string, password_: string){
     }
 
     if(await argon2.verify(user.password, password_)){
-      return {success: true, message: "Login successful"};
+      return {success: true, id: user.user_id, message: "Login successful"};
     }
     else{
       return {success: false, code: 401, message: "Password or username incorrect"};
@@ -139,11 +144,11 @@ export async function changePassword(user_name_: string, old_password_: string, 
 }
 
 
-export async function changeEmail(user_name_: string, old_email_: string, new_email_: string){
+export async function changeEmail(user_id_: number, old_email_: string, new_email_: string){
   try{
     const user = await prisma.user.update({
       where: {
-        user_name: user_name_,
+        user_id: user_id_,
         email: old_email_
       },
       data: {
@@ -158,9 +163,31 @@ export async function changeEmail(user_name_: string, old_email_: string, new_em
 }
 
 
+export async function changeName(user_id_: number, first_name_: string, last_name_: string){
+  try{
+    const user = await prisma.user.update({
+      where: {
+        user_id: user_id_,
+      },
+      data: {
+        first_name: first_name_,
+        last_name: last_name_
+      }
+    })
+    return {success: true, message: "name change successful"};
+  }
+  catch(e){
+    if((e as Error).message="An operation failed because it depends on one or more records that were required but not found. No record was found for an update."){
+      return {success: false, code: 401, message: "Username not found. "+ e};
+    }
+    return {success: false, code: 500, message: "error while chaning name. "+ e};
+  }
+}
+
+
 
 //help functions / extra functions without return to frontend
-export async function userNameAvailable(user_name_: string){
+export async function userNameAvailable(user_name_: string): Promise<boolean>{
   try{
     const user = await prisma.user.findFirst({
       select: {user_id: true},
@@ -176,7 +203,7 @@ export async function userNameAvailable(user_name_: string){
 }
 
 
-export async function emailAvailable(email_: string){
+export async function emailAvailable(email_: string): Promise<boolean>{
   try{
     const user = await prisma.user.findFirst({
       select: {user_id: true},
@@ -187,6 +214,41 @@ export async function emailAvailable(email_: string){
   }
   catch (e) {
     console.error("error while checking email availability. "+ e);
+    return false;
+  }
+}
+
+
+export async function setLastLogin(user_name_: string, last_login_?: Date){
+  if(last_login_==null)last_login_= new Date();
+  try{
+    const user = await prisma.user.update({
+      where: {
+        user_name: user_name_
+      },
+      data: {
+        last_login: last_login_
+      }
+    })
+    return {success: true, message: "last login updated"};
+  }
+  catch(e){
+    return {success: false, code: 500, message: "error while updating last login. "+ e};
+  }
+}
+
+
+export async function userIsAdmin(user_id_: number): Promise<boolean>{
+  try{
+    const user = await prisma.user.findFirst({
+      select: {is_admin: true},
+      where: {user_id: user_id_}
+    });
+    if(user == null){ return false;}
+    return user.is_admin;
+  }
+  catch (e) {
+    console.error("error while checking admin status of user: " + user_id_ + ". "+ e);
     return false;
   }
 }
