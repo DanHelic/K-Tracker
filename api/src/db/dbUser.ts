@@ -7,11 +7,13 @@ export async function getUser(userName){
 }*/
 
 import argon2 from "argon2";
-import prisma from './dbMain.js';
+import prisma from "./dbMain.js";
+import {userT} from ".././types/userT.js";
+
 
 export async function getAllUsers () {
   try{
-    const users = await prisma.user.findMany({
+    const usersDb = await prisma.user.findMany({
       select: {
         user_id: true,
         user_name: true,
@@ -20,47 +22,171 @@ export async function getAllUsers () {
         is_admin: true
       }
     });
+
+    const users: userT[] = [];
+    usersDb.forEach((user) => users.push(userT.fromDb(user)));
     return { success: true, users };
   }
-  catch (error) {
-    console.error(error);
-    return { success: false, code: "e.code", message: "Unknown error occured"};
+  catch (e) {
+    console.error(e);
+    return { success: false, code: 500, message: "error while trying to get all users. "+ e};
   }
 }
 
-export async function getUserById(userId: number) {
-  const user = await prisma.user.findFirst({
-    select: {
-      user_id: true,
-      user_name: true,
-      created_at: true,
-      last_login: true,
-      is_admin: true
-    },
-    where: {
-      user_id: userId
-    }
-  })
-  return user;
+
+export async function getUserById(userId_: number) {
+  try{
+    const userDb = await prisma.user.findFirst({
+      select: {
+        user_id: true,
+        user_name: true,
+        created_at: true,
+        last_login: true,
+        is_admin: true
+      },
+      where: {
+        user_id: userId_
+      }
+    });
+
+    const user = userT.fromDb(userDb);
+    return {success: true, user};
+  }
+  catch (e) {
+    return {success: false, code: 500, message: "error while trying to get user. "+ e};
+  }
 }
 
-export async function createUser(user_name: string, password: string, email: string, first_name: string, last_name: string) {
+
+export async function createUser(user_name_: string, password_: string, email_: string, first_name_: string, last_name_: string) {
   try{
     const newUser = await prisma.user.create({
       data: {
-        user_name: user_name,
-        email: email,
-        password: await argon2.hash(password),
-        first_name: first_name,
-        last_name: last_name,
+        user_name: user_name_,
+        email: email_,
+        password: await argon2.hash(password_),
+        first_name: first_name_,
+        last_name: last_name_,
       },
     });
-    console.log(newUser);
-    return {success: true, newUser};
+
+    const user = userT.fromDb(newUser);
+    return {success: true, user};
   }
   catch (e) {
-    return {success: false, message: "error while trying to create a new user "+ e};
+    return {success: false, code: 500, message: "error while trying to create a new user "+ e};
   }
-  
-  
+}
+
+
+export async function checkPassword(user_name_: string, password_: string){
+  try{
+    const user = await prisma.user.findFirst({
+      select: {password: true},
+      where: {user_name: user_name_}
+    });
+
+    if(user==null){
+      return {success: false, code: 401, message: "Password or username incorrect"};
+    }
+
+    if(await argon2.verify(user.password, password_)){
+      return {success: true, message: "Login successful"};
+    }
+    else{
+      return {success: false, code: 401, message: "Password or username incorrect"};
+    }
+  }
+  catch (e) {
+    return {success: false, code: 500, message: "error while trying to login user. "+ e};
+  }
+}
+
+
+export async function changeUsername(old_user_name_: string, new_user_name_: string){
+  try{
+    const user = await prisma.user.update({
+      where: {
+        user_name: old_user_name_
+      },
+      data: {
+        user_name: new_user_name_
+      }
+    })
+    return {success: true, message: "Usernamechange successful"};
+  }
+  catch(e){
+    return {success: false, code: 500, message: "error while changing username. "+ e};
+  }
+}
+
+
+export async function changePassword(user_name_: string, old_password_: string, new_password_: string){
+  try{
+    const user = await prisma.user.update({
+      where: {
+        user_name: user_name_
+      },
+      data: {
+        password: await argon2.hash(new_password_)
+      }
+    })
+    return {success: true, message: "Password change successful"};
+  }
+  catch(e){
+    return {success: false, code: 500, message: "error while chaning password. "+ e};
+  }
+}
+
+
+export async function changeEmail(user_name_: string, old_email_: string, new_email_: string){
+  try{
+    const user = await prisma.user.update({
+      where: {
+        user_name: user_name_,
+        email: old_email_
+      },
+      data: {
+        email: new_email_
+      }
+    })
+    return {success: true, message: "Email change successful"};
+  }
+  catch(e){
+    return {success: false, code: 500, message: "error while chaning email. "+ e};
+  }
+}
+
+
+
+//help functions / extra functions without return to frontend
+export async function userNameAvailable(user_name_: string){
+  try{
+    const user = await prisma.user.findFirst({
+      select: {user_id: true},
+      where: {user_name: user_name_}
+    });
+    if(user == null){ return true;}
+    return false;
+  }
+  catch (e) {
+    console.error("error while checking username availability. "+ e);
+    return false;
+  }
+}
+
+
+export async function emailAvailable(email_: string){
+  try{
+    const user = await prisma.user.findFirst({
+      select: {user_id: true},
+      where: {email: email_}
+    });
+    if(user == null){ return true;}
+    return false;
+  }
+  catch (e) {
+    console.error("error while checking email availability. "+ e);
+    return false;
+  }
 }

@@ -10,7 +10,7 @@ app.use(express.json());
 const router = express.Router();
 export default router;
 
-import { getAllUsers, getUserById, createUser } from './db/dbUser.js';
+import { getAllUsers, getUserById, createUser, userNameAvailable, emailAvailable, checkPassword, changeUsername, changePassword, changeEmail } from './db/dbUser.js';
 
 /**
  * @swagger
@@ -52,26 +52,34 @@ import { getAllUsers, getUserById, createUser } from './db/dbUser.js';
  */
 
 
+//Get-Endpoints
 /** 
  * @swagger 
  * /user/users:
  *  get:
- *    summary: Get List of all Users
+ *    summary: Get a List of all Users
  *    tags:
  *      - user
  *    responses:
  *      200:
  *        description: Returns all Users
+ *      500:
+ *        description: Internal error
 */
 router.get("/users", async (req, res) => {
-    res.json(await getAllUsers());
+    const ret = await getAllUsers();
+
+    if(ret.success) return res.status(201).json(ret.users);
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
 });
+
 
 /** 
  * @swagger 
  * /user/user/{id}:
  *  get:
- *    summary: Get Name of a Single User
+ *    summary: Get the Name of a Single User
  *    parameters:
  *      - in: path
  *        name: id
@@ -84,19 +92,27 @@ router.get("/users", async (req, res) => {
  *    responses:
  *      200:
  *        description: Returns the User with the specified id
+ *      500:
+ *        description: Internal error
 */
 router.get("/user/:id", async (req, res) => {
     const id = parseInt(req.params.id, 10);
-    res.json(await getUserById(id));
+    const ret = await getUserById(id);
+
+    if(ret.success) return res.status(201).json(ret.user);
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
 });
 
 
+
+//Post-Endpoints
 /**
  * @swagger
  * /user/createUser:
  *   post:
  *     summary: Creates a new User
- *     tags: [User]
+ *     tags: [user]
  *     requestBody:
  *       required: true
  *       content:
@@ -124,18 +140,225 @@ router.get("/user/:id", async (req, res) => {
  *                 description: last name
  *     responses:
  *       201:
- *         description: Benutzer erfolgreich erstellt
+ *         description: User created successfully
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
- *         description: Ungültige Eingabedaten
+ *         description: Missing Inputs
+ *       500:
+ *         description: Internal error
  */
 router.post("/createUser", async (req, res) => {
     const { user_name, password, email, first_name, last_name } = req.body;
+    
     if (!user_name) { return res.status(400).json({ message: "username missing" });}
     if (!password) { return res.status(400).json({ message: "password missing" });}
 
-    res.json(await createUser(user_name, password, email, first_name, last_name));
+    if ((password as string).length < 6) { return res.status(400).json({ message: "password has to have 6 or more characters" });}
+    
+    if (!await userNameAvailable(user_name)) return res.status(400).json({ message: "username already taken" });
+    if (!await emailAvailable(email)) return res.status(400).json({ message: "email already in use" });
+
+    const ret = await createUser(user_name, password, email, first_name, last_name);
+
+    if(ret.success) return res.status(201).json({message: "User created successfully"});
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
 });
+
+
+/**
+ * @swagger
+ * /user/login:
+ *   post:
+ *     summary: Login specified user
+ *     tags: [user]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user_name
+ *               - password
+ *             properties:
+ *               user_name:
+ *                 type: string
+ *                 description: Username
+ *               password:
+ *                 type: string
+ *                 description: password
+ *     responses:
+ *       201:
+ *         description: Login successful
+ *       401: 
+ *         description: Password or username incorrect
+ *       500:
+ *         description: Internal error
+ */
+router.post("/login", async (req, res) => {
+    const ret = await checkPassword(req.body.user_name, req.body.password);
+
+    //create and return token
+
+    if(ret.success) return res.status(201).json({message: "Login successful"});
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+})
+
+
+
+//Patch-Endpoints
+/**
+ * @swagger
+ * /user/changeUsername:
+ *   patch:
+ *     summary: change of the username
+ *     tags: [user]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - old_user_name
+ *               - new_user_name
+ *               - password
+ *             properties:
+ *               old_user_name:
+ *                 type: string
+ *                 description: Current Username
+ *               new_user_name:
+ *                 type: string
+ *                 description: New Username
+ *               password:
+ *                 type: string
+ *                 description: password
+ *     responses:
+ *       201:
+ *         description: Username change successful
+ *       400: 
+ *         description: Old and New Username are the same
+ *       401: 
+ *         description: Username or password incorrect
+ *       409: 
+ *         description: Username not available
+ *       500:
+ *         description: Internal error
+ */
+router.patch("/changeUsername", async (req, res) => {
+    if (req.body.old_user_name==req.body.new_user_name) return res.status(400).json({message: "Old and New Username are the same"});
+    const pwCheck = await checkPassword(req.body.old_user_name, req.body.password);
+    if (!pwCheck.success) return res.status(401).json({message: "Password or username incorrect"});
+    const uNameAvailable = await userNameAvailable(req.body.new_user_name);
+    if (!uNameAvailable) return res.status(409).json({message: "Username not available"});
+
+    const ret = await changeUsername(req.body.old_user_name, req.body.new_user_name);
+
+    if(ret.success) return res.status(201).json({message: "Username change successful"});
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+})
+
+
+/**
+ * @swagger
+ * /user/changePassword:
+ *   patch:
+ *     summary: change of the password
+ *     tags: [user]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user_name
+ *               - old_password
+ *               - new_password
+ *             properties:
+ *               user_name:
+ *                 type: string
+ *                 description: Username
+ *               old_password:
+ *                 type: string
+ *                 description: current password
+ *               new_password:
+ *                 type: string
+ *                 description: new password
+ *     responses:
+ *       201:
+ *         description: Password change successful
+ *       400: 
+ *         description: Old and New Password are the same
+ *       401: 
+ *         description: Username or password incorrect
+ *       500:
+ *         description: Internal error
+ */
+router.patch("/changePassword", async (req, res) => {
+    if (req.body.old_password==req.body.new_password) return res.status(400).json({message: "Old and New Password are the same"});
+    const pwCheck = await checkPassword(req.body.user_name, req.body.old_password);
+    if (!pwCheck.success) return res.status(401).json({message: "Username or password incorrect"});
+
+    const ret = await changePassword(req.body.user_name, req.body.old_password, req.body.new_password);
+
+    if(ret.success) return res.status(201).json({message: "Password change successful"});
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+})
+
+
+/**
+ * @swagger
+ * /user/changeEmail:
+ *   patch:
+ *     summary: change of the email
+ *     tags: [user]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user_name
+ *               - password
+ *               - new_email
+ *             properties:
+ *               user_name:
+ *                 type: string
+ *                 description: Username
+ *               password:
+ *                 type: string
+ *                 description: current password
+ *               new_email:
+ *                 type: string
+ *                 description: new email
+ *     responses:
+ *       201:
+ *         description: Email change successful
+ *       401: 
+ *         description: Username or password incorrect
+ *       409: 
+ *         description: Email already in use
+ *       500:
+ *         description: Internal error
+ */
+router.patch("/changeEmail", async (req, res) => {
+    const pwCheck = await checkPassword(req.body.user_name, req.body.password);
+    if (!pwCheck.success) return res.status(401).json({message: "Username or password incorrect"});
+    const eAvailable = await emailAvailable(req.body.new_email);
+    if(!eAvailable) return res.status(409).json({message: "Email already in use"});
+
+    const ret = await changeEmail(req.body.user_name, req.body.old_email, req.body.new_email);
+
+    if(ret.success) return res.status(201).json({message: "Email change successful"});
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+})

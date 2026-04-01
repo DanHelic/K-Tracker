@@ -13,7 +13,6 @@ app.use(express.json());
 
 import userRouter from "./user.js";
 
-
 app.use("/api/user/", userRouter);
 
 /**
