@@ -40,8 +40,11 @@ export async function getUserById(userId_: number) {
       select: {
         user_id: true,
         user_name: true,
+        email: true,
         created_at: true,
         last_login: true,
+        first_name: true,
+        last_name: true,
         is_admin: true
       },
       where: {
@@ -71,7 +74,7 @@ export async function createUser(user_name_: string, password_: string, email_: 
     });
 
     const user = userT.fromDb(newUser);
-    return {success: true, user};
+    return {success: true, user: user};
   }
   catch (e) {
     return {success: false, code: 500, message: "error while trying to create a new user "+ e};

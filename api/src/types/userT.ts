@@ -1,28 +1,4 @@
 export class userT{
-    /*
-    user_id: number;
-    user_name: string;
-    email: string;
-    created_at: Date;
-    last_login: Date;
-    first_name: string;
-    last_name: string;
-    is_admin: boolean;
-    password: string;
-
-    constructor(user_id: number, user_name: string, email: string, created_at: Date, last_login: Date, first_name: string, last_name: string, is_admin: boolean, password: string){
-        this.user_id = user_id;
-        this.user_name = user_name;
-        this.email = email;
-        this.created_at = created_at;
-        this.last_login = last_login;
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.is_admin = is_admin;
-        this.password = password;
-    }
-    */
-
     constructor(
         public user_id: number,
         public user_name: string,

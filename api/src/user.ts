@@ -11,7 +11,9 @@ app.use(express.json());
 const router = express.Router();
 export default router;
 
-import { getAllUsers, getUserById, createUser, userNameAvailable, emailAvailable, checkPassword, changeUsername, changePassword, changeEmail, setLastLogin, changeName, userIsAdmin } from './db/dbUser.js';
+//import { getAllUsers, getUserById, createUser, userNameAvailable, emailAvailable, checkPassword, changeUsername, changePassword, changeEmail, setLastLogin, changeName, userIsAdmin } from './db/dbUser.js';
+
+import * as dbUser from './db/dbUser.js';
 
 /**
  * @swagger
@@ -24,7 +26,7 @@ import { getAllUsers, getUserById, createUser, userNameAvailable, emailAvailable
  *       type: object
  *       properties:
  *         user_id:
- *           type: integer
+ *           type: number
  *           description: the id of the user
  *         user_name:
  *           type: string
@@ -64,13 +66,15 @@ import { getAllUsers, getUserById, createUser, userNameAvailable, emailAvailable
  *    responses:
  *      201:
  *        description: Returns all Users
+ *      401:
+ *        description: unauthorized
  *      500:
  *        description: Internal error
 */
 router.get("/users", authMiddleware, async (req, res) => {
     // @ts-ignore
-    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
-    const ret = await getAllUsers();
+    if(!await dbUser.userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
+    const ret = await dbUser.getAllUsers();
 
     if(ret.success) return res.status(201).json(ret.users);
     if(ret.code==null) return res.status(500).json({message: ret.message});
@@ -154,10 +158,10 @@ router.post("/createUser", async (req, res) => {
 
     if ((password as string).length < 6) { return res.status(400).json({ message: "password has to have 6 or more characters" });}
     
-    if (!await userNameAvailable(user_name)) return res.status(400).json({ message: "username already taken" });
-    if (!await emailAvailable(email)) return res.status(400).json({ message: "email already in use" });
+    if (!await dbUser.userNameAvailable(user_name)) return res.status(400).json({ message: "username already taken" });
+    if (!await dbUser.emailAvailable(email)) return res.status(400).json({ message: "email already in use" });
 
-    const ret = await createUser(user_name, password, email, first_name, last_name);
+    const ret = await dbUser.createUser(user_name, password, email, first_name, last_name);
 
     if(ret.success) return res.status(201).json({message: "User created successfully"});
     if(ret.code==null) return res.status(500).json({message: ret.message});
@@ -171,7 +175,8 @@ router.post("/createUser", async (req, res) => {
  * /user/changeUsername:
  *   patch:
  *     summary: change of the username
- *     tags: [user]
+ *     tags: 
+ *       - user
  *     requestBody:
  *       required: true
  *       content:
@@ -206,12 +211,12 @@ router.post("/createUser", async (req, res) => {
  */
 router.patch("/changeUsername", authMiddleware, async (req, res) => {
     if (req.body.old_user_name==req.body.new_user_name) return res.status(400).json({message: "Old and New Username are the same"});
-    const pwCheck = await checkPassword(req.body.old_user_name, req.body.password);
+    const pwCheck = await dbUser.checkPassword(req.body.old_user_name, req.body.password);
     if (!pwCheck.success) return res.status(401).json({message: "Password or username incorrect"});
-    const uNameAvailable = await userNameAvailable(req.body.new_user_name);
+    const uNameAvailable = await dbUser.userNameAvailable(req.body.new_user_name);
     if (!uNameAvailable) return res.status(409).json({message: "Username not available"});
 
-    const ret = await changeUsername(req.body.old_user_name, req.body.new_user_name);
+    const ret = await dbUser.changeUsername(req.body.old_user_name, req.body.new_user_name);
 
     if(ret.success) return res.status(201).json({message: "Username change successful"});
     if(ret.code==null) return res.status(500).json({message: ret.message});
@@ -257,10 +262,10 @@ router.patch("/changeUsername", authMiddleware, async (req, res) => {
  */
 router.patch("/changePassword", authMiddleware, async (req, res) => {
     if (req.body.old_password==req.body.new_password) return res.status(400).json({message: "Old and New Password are the same"});
-    const pwCheck = await checkPassword(req.body.user_name, req.body.old_password);
+    const pwCheck = await dbUser.checkPassword(req.body.user_name, req.body.old_password);
     if (!pwCheck.success) return res.status(401).json({message: "Username or password incorrect"});
 
-    const ret = await changePassword(req.body.user_name, req.body.old_password, req.body.new_password);
+    const ret = await dbUser.changePassword(req.body.user_name, req.body.old_password, req.body.new_password);
 
     if(ret.success) return res.status(201).json({message: "Password change successful"});
     if(ret.code==null) return res.status(500).json({message: ret.message});
@@ -305,9 +310,9 @@ router.patch("/changePassword", authMiddleware, async (req, res) => {
  *         description: Internal error
  */
 router.patch("/changeEmail", authMiddleware, async (req, res) => {
-    const pwCheck = await checkPassword(req.body.user_name, req.body.password);
+    const pwCheck = await dbUser.checkPassword(req.body.user_name, req.body.password);
     if (!pwCheck.success) return res.status(401).json({message: "Username or password incorrect"});
-    const eAvailable = await emailAvailable(req.body.new_email);
+    const eAvailable = await dbUser.emailAvailable(req.body.new_email);
     if(!eAvailable) return res.status(409).json({message: "Email already in use"});
 
     // @ts-ignore
