@@ -95,7 +95,7 @@ export async function searchItemByName(item_name_: string) {
         created_at: true
       },
       where: {
-        name: {contains: item_name_}
+        name: {contains: item_name_, mode: "insensitive"}
       }
     });
 
@@ -204,9 +204,9 @@ export async function searchItem(search_: string) {
       },
       where: {
         OR: [
-          {name: {contains: search_}},
-          {item_type: {item_type_name: {contains: search_} }},
-          {item_producer: {item_producer_name: {contains: search_} }}
+          {name: {contains: search_, mode: "insensitive"}},
+          {item_type: {item_type_name: {contains: search_, mode: "insensitive"} }},
+          {item_producer: {item_producer_name: {contains: search_, mode: "insensitive"} }}
         ]
       }
     });

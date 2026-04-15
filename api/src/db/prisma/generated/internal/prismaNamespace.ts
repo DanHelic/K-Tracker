@@ -1060,6 +1060,7 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 export const PurchaseScalarFieldEnum = {
   purchase_id: 'purchase_id',
   user_id: 'user_id',
+  purchase_name: 'purchase_name',
   purchased_at: 'purchased_at',
   store_id: 'store_id',
   total_price: 'total_price',

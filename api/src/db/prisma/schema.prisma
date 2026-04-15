@@ -26,13 +26,16 @@ model user {
 model purchase {
   purchase_id   Int       @id @default(autoincrement())
   user_id       Int       
-  purchased_at  DateTime  @db.Timestamptz
+  purchase_name String?   @db.VarChar
+  purchased_at  DateTime  @default(now()) @db.Date
   store_id      Int?
   total_price   Decimal   @db.Decimal(10,2) @default(0.00)
   item_count    Int       @default(0)
 
   user          user      @relation(fields: [user_id], references: [user_id])
   store         store?    @relation(fields: [store_id], references: [store_id])
+
+  purchaseItems purchase_item[]
 }
 
 model purchase_item {
@@ -43,6 +46,7 @@ model purchase_item {
   amount              Int     
   item_name           String?   @db.VarChar
 
+  purchase            purchase? @relation(fields: [purchase_id], references: [purchase_id])
   item                item?     @relation(fields: [item_id], references: [item_id])
 }
 
@@ -93,7 +97,7 @@ model store {
   store_id    Int       @id @default(autoincrement())
   name        String    @db.VarChar
   user_id     Int
-  location    String    @db.VarChar
+  location    String?   @db.VarChar
 
   user        user      @relation(fields: [user_id], references: [user_id])
 

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "purchase" ALTER COLUMN "purchased_at" SET DEFAULT CURRENT_TIMESTAMP,
+ALTER COLUMN "purchased_at" SET DATA TYPE DATE;

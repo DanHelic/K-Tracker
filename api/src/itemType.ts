@@ -62,6 +62,36 @@ router.get("/itemType/:id", async (req, res) => {
 });
 
 
+/** 
+ * @swagger 
+ * /itemType/itemTypeByName/{name}:
+ *  get:
+ *    summary: Get the itemtypes with the provided name
+ *    tags:
+ *      - itemType
+ *    parameters:
+ *      - name: name
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      201:
+ *        description: Returns itemtypes
+ *      400:
+ *        description: itemtype with provided name not found
+ *      500:
+ *        description: Internal error
+*/
+router.get("/itemTypeByName/:name", async (req, res) => {
+    const ret = await dbItemType.getItemTypeByName(req.params.name);
+
+    if(ret.success) return res.status(201).json(ret.item);
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+});
+
+
 
 //Post-Endpoints
 /**

@@ -17,6 +17,9 @@ import itemRouter from "./item.js";
 import itemProducerRouter from "./itemProducer.js";
 import itemTypeRouter from "./itemType.js";
 import countryRouter from "./country.js";
+import storeRouter from "./store.js";
+import purchaseRouter from "./purchase.js";
+import purchaseItemRouter from "./purchaseItem.js";
 
 app.use("/api/user/", userRouter);
 app.use("/api/auth/", authRouter);
@@ -24,6 +27,9 @@ app.use("/api/item/", itemRouter);
 app.use("/api/itemProducer/", itemProducerRouter);
 app.use("/api/itemType/", itemTypeRouter);
 app.use("/api/country/", countryRouter);
+app.use("/api/store/", storeRouter);
+app.use("/api/purchase/", purchaseRouter);
+app.use("/api/purchaseItem/", purchaseItemRouter);
 
 
 /**

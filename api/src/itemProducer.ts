@@ -60,11 +60,64 @@ router.get("/itemProducer/:id", async (req, res) => {
     if (Number.isNaN(inputNumber)) return res.status(400).json({message: "Input is not a number"});
     const ret = await dbItemProducer.getItemProducerById(inputNumber);
 
-    if(ret.success) return res.status(201).json(ret.item);
+    if(ret.success) return res.status(201).json(ret.itemProducer);
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 });
 
+
+/** 
+ * @swagger 
+ * /itemProducer/itemProducerByName/{name}:
+ *  get:
+ *    summary: Get the itemproducers with the provided name
+ *    tags:
+ *      - itemProducer
+ *    parameters:
+ *      - name: name
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      201:
+ *        description: Returns itemproducer
+ *      400:
+ *        description: itemproducer with provided name not found
+ *      500:
+ *        description: Internal error
+*/
+router.get("/itemProducerByName/:name", async (req, res) => {
+    const ret = await dbItemProducer.getItemProducerByName(req.params.name);
+
+    if(ret.success) return res.status(201).json(ret.itemProducers);
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+});
+
+
+/** 
+ * @swagger 
+ * /itemProducer/allItemProducers:
+ *  get:
+ *    summary: Get all itemproducers
+ *    tags:
+ *      - itemProducer
+ *    responses:
+ *      201:
+ *        description: Returns all itemproducers
+ *      400:
+ *        description: itemproducers not found
+ *      500:
+ *        description: Internal error
+*/
+router.get("/allItemProducers", async (req, res) => {
+    const ret = await dbItemProducer.getAllItemProducer();
+
+    if(ret.success) return res.status(201).json(ret.itemProducers);
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+});
 
 
 //Post-Endpoints
@@ -114,7 +167,7 @@ router.post("/createItemProducer", authMiddleware, async (req, res) => {
 
     const ret = await dbItemProducer.createItemProducer(item_producer_name, parseInt(country_id));
 
-    if(ret.success) return res.status(201).json({message: "itemproducer created successfully", itemType: ret.itemtype});
+    if(ret.success) return res.status(201).json({message: "itemproducer created successfully", itemProducer: ret.itemProducer});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 });

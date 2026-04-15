@@ -181,7 +181,7 @@ export type StoreGroupByOutputType = {
   store_id: number
   name: string
   user_id: number
-  location: string
+  location: string | null
   _count: StoreCountAggregateOutputType | null
   _avg: StoreAvgAggregateOutputType | null
   _sum: StoreSumAggregateOutputType | null
@@ -211,7 +211,7 @@ export type storeWhereInput = {
   store_id?: Prisma.IntFilter<"store"> | number
   name?: Prisma.StringFilter<"store"> | string
   user_id?: Prisma.IntFilter<"store"> | number
-  location?: Prisma.StringFilter<"store"> | string
+  location?: Prisma.StringNullableFilter<"store"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>
   purchases?: Prisma.PurchaseListRelationFilter
 }
@@ -220,7 +220,7 @@ export type storeOrderByWithRelationInput = {
   store_id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
-  location?: Prisma.SortOrder
+  location?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.userOrderByWithRelationInput
   purchases?: Prisma.purchaseOrderByRelationAggregateInput
 }
@@ -232,7 +232,7 @@ export type storeWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.storeWhereInput | Prisma.storeWhereInput[]
   name?: Prisma.StringFilter<"store"> | string
   user_id?: Prisma.IntFilter<"store"> | number
-  location?: Prisma.StringFilter<"store"> | string
+  location?: Prisma.StringNullableFilter<"store"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.userWhereInput>
   purchases?: Prisma.PurchaseListRelationFilter
 }, "store_id">
@@ -241,7 +241,7 @@ export type storeOrderByWithAggregationInput = {
   store_id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
-  location?: Prisma.SortOrder
+  location?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.storeCountOrderByAggregateInput
   _avg?: Prisma.storeAvgOrderByAggregateInput
   _max?: Prisma.storeMaxOrderByAggregateInput
@@ -256,12 +256,12 @@ export type storeScalarWhereWithAggregatesInput = {
   store_id?: Prisma.IntWithAggregatesFilter<"store"> | number
   name?: Prisma.StringWithAggregatesFilter<"store"> | string
   user_id?: Prisma.IntWithAggregatesFilter<"store"> | number
-  location?: Prisma.StringWithAggregatesFilter<"store"> | string
+  location?: Prisma.StringNullableWithAggregatesFilter<"store"> | string | null
 }
 
 export type storeCreateInput = {
   name: string
-  location: string
+  location?: string | null
   user: Prisma.userCreateNestedOneWithoutStoresInput
   purchases?: Prisma.purchaseCreateNestedManyWithoutStoreInput
 }
@@ -270,13 +270,13 @@ export type storeUncheckedCreateInput = {
   store_id?: number
   name: string
   user_id: number
-  location: string
+  location?: string | null
   purchases?: Prisma.purchaseUncheckedCreateNestedManyWithoutStoreInput
 }
 
 export type storeUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  location?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.userUpdateOneRequiredWithoutStoresNestedInput
   purchases?: Prisma.purchaseUpdateManyWithoutStoreNestedInput
 }
@@ -285,7 +285,7 @@ export type storeUncheckedUpdateInput = {
   store_id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.IntFieldUpdateOperationsInput | number
-  location?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchases?: Prisma.purchaseUncheckedUpdateManyWithoutStoreNestedInput
 }
 
@@ -293,19 +293,19 @@ export type storeCreateManyInput = {
   store_id?: number
   name: string
   user_id: number
-  location: string
+  location?: string | null
 }
 
 export type storeUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  location?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type storeUncheckedUpdateManyInput = {
   store_id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.IntFieldUpdateOperationsInput | number
-  location?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type StoreListRelationFilter = {
@@ -414,14 +414,14 @@ export type storeUpdateOneWithoutPurchasesNestedInput = {
 
 export type storeCreateWithoutUserInput = {
   name: string
-  location: string
+  location?: string | null
   purchases?: Prisma.purchaseCreateNestedManyWithoutStoreInput
 }
 
 export type storeUncheckedCreateWithoutUserInput = {
   store_id?: number
   name: string
-  location: string
+  location?: string | null
   purchases?: Prisma.purchaseUncheckedCreateNestedManyWithoutStoreInput
 }
 
@@ -458,12 +458,12 @@ export type storeScalarWhereInput = {
   store_id?: Prisma.IntFilter<"store"> | number
   name?: Prisma.StringFilter<"store"> | string
   user_id?: Prisma.IntFilter<"store"> | number
-  location?: Prisma.StringFilter<"store"> | string
+  location?: Prisma.StringNullableFilter<"store"> | string | null
 }
 
 export type storeCreateWithoutPurchasesInput = {
   name: string
-  location: string
+  location?: string | null
   user: Prisma.userCreateNestedOneWithoutStoresInput
 }
 
@@ -471,7 +471,7 @@ export type storeUncheckedCreateWithoutPurchasesInput = {
   store_id?: number
   name: string
   user_id: number
-  location: string
+  location?: string | null
 }
 
 export type storeCreateOrConnectWithoutPurchasesInput = {
@@ -492,7 +492,7 @@ export type storeUpdateToOneWithWhereWithoutPurchasesInput = {
 
 export type storeUpdateWithoutPurchasesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  location?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.userUpdateOneRequiredWithoutStoresNestedInput
 }
 
@@ -500,32 +500,32 @@ export type storeUncheckedUpdateWithoutPurchasesInput = {
   store_id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.IntFieldUpdateOperationsInput | number
-  location?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type storeCreateManyUserInput = {
   store_id?: number
   name: string
-  location: string
+  location?: string | null
 }
 
 export type storeUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  location?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchases?: Prisma.purchaseUpdateManyWithoutStoreNestedInput
 }
 
 export type storeUncheckedUpdateWithoutUserInput = {
   store_id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  location?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchases?: Prisma.purchaseUncheckedUpdateManyWithoutStoreNestedInput
 }
 
 export type storeUncheckedUpdateManyWithoutUserInput = {
   store_id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  location?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -615,7 +615,7 @@ export type $storePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     store_id: number
     name: string
     user_id: number
-    location: string
+    location: string | null
   }, ExtArgs["result"]["store"]>
   composites: {}
 }

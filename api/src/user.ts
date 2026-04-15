@@ -22,7 +22,7 @@ import * as dbUser from './db/dbUser.js';
  *   description: User related endpoints
  * components:
  *   schemas:
- *     User:
+ *     user:
  *       type: object
  *       properties:
  *         user_id:
@@ -60,12 +60,12 @@ import * as dbUser from './db/dbUser.js';
  * @swagger 
  * /user/users:
  *  get:
- *    summary: Get a List of all Users
+ *    summary: Get a List of all users
  *    tags:
  *      - user
  *    responses:
  *      201:
- *        description: Returns all Users
+ *        description: Returns all users
  *      401:
  *        description: unauthorized
  *      500:
@@ -144,7 +144,7 @@ router.get("/user", authMiddleware, async (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/user'
  *       400:
  *         description: Missing Inputs
  *       500:

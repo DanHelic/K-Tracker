@@ -113,7 +113,7 @@ router.get("/item/:id", async (req, res) => {
 
 /** 
  * @swagger 
- * /item/itemByName/{name}:
+ * /item/itemByNameExact/{name}:
  *  get:
  *    summary: Get items with the exact provided name
  *    tags:
@@ -299,7 +299,7 @@ router.get("/searchItem/:search", async (req, res) => {
 
 /** 
  * @swagger 
- * /item/getAllItems:
+ * /item/allItems:
  *  get:
  *    summary: Returns a list of all items
  *    tags:
@@ -314,7 +314,7 @@ router.get("/searchItem/:search", async (req, res) => {
  *      500:
  *        description: Internal error
 */
-router.get("/getAllItems", authMiddleware, async (req, res) => {
+router.get("/allItems", authMiddleware, async (req, res) => {
     // @ts-ignore
     if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
     const ret = await dbItem.getAllItems();
