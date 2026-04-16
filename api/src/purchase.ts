@@ -112,9 +112,9 @@ router.get("/purchaseWithoutItems/:id", authMiddleware, async (req, res) => {
 
 /** 
  * @swagger 
- * /purchase/PurchasesByUser/{id}:
+ * /purchase/PurchasesOfUser/{id}:
  *  get:
- *    summary: Get all purchases of current user (admin only)
+ *    summary: Get all purchases of specified user (admin only)
  *    tags:
  *      - purchase
  *    parameters:
@@ -132,12 +132,77 @@ router.get("/purchaseWithoutItems/:id", authMiddleware, async (req, res) => {
  *      500:
  *        description: internal error
 */
-router.get("/PurchasesByUser/:id", authMiddleware, async (req, res) => {
+router.get("/PurchasesOfUser/:id", authMiddleware, async (req, res) => {
     // @ts-ignore
     if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
 
     // @ts-ignore
     const ret = await dbPurchase.getPurchasesOfUser(parseInt(req.params.id));
+
+    if(ret.success) return res.status(201).json(ret.purchases);
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+});
+
+
+/** 
+ * @swagger 
+ * /purchase/purchases:
+ *  get:
+ *    summary: Get all purchases of current user paginated
+ *    tags:
+ *      - purchase
+ *    parameters:
+ *      - name: page
+ *        in: query
+ *        description: page number
+ *        required: false
+ *        schema:
+ *          type: number
+ *      - name: limit
+ *        in: query
+ *        description: limit per page
+ *        required: false
+ *        schema:
+ *          type: number
+ *      - name: orderBy
+ *        in: query
+ *        description: order by row (purchase_name/purchased_at/store_id/total_price/item_count)
+ *        required: false
+ *        schema:
+ *          type: string
+ *      - name: order
+ *        in: query
+ *        description: order of query (asc or desc)
+ *        required: false
+ *        schema:
+ *          type: string
+ *    responses:
+ *      201:
+ *        description: returns paginated purchases of current user
+ *      403:
+ *        description: unauthorized
+ *      500:
+ *        description: internal error
+*/
+router.get("/purchases", authMiddleware, async (req, res) => {
+    let page = Number(req.query.page) || 1;
+    if(page<1) page = 1;
+
+    let limit = Number(req.query.limit) || 20;
+    if(limit<1 || limit > 50) limit = 20;
+
+    const offset = (page-1) * limit;
+
+    let orderBy = "purchased_at";
+    const possibleOrders = ["purchase_name","purchased_at","store_id","total_price","item_count"];
+    if(possibleOrders.includes(req.query.orderBy as string)) orderBy = req.query.orderBy as string;
+
+    let order = "desc"
+    if(req.query.order=="asc" || req.query.order=="desc") order = req.query.order;
+
+    // @ts-ignore
+    const ret = await dbPurchase.getPurchasesOfUserPaginated(req.user.userId, offset, limit, orderBy, order);
 
     if(ret.success) return res.status(201).json(ret.purchases);
     if(ret.code==null) return res.status(500).json({message: ret.message});

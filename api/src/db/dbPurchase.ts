@@ -97,6 +97,36 @@ export async function getPurchasesOfUser(user_id_: number) {
     return {success: true, purchases: purchaseDb};
   }
   catch (e) {
+    return {success: false, code: 500, message: "error while trying to get purchases. "+ e};
+  }
+}
+
+
+export async function getPurchasesOfUserPaginated(user_id_: number, offset: number, limit: number, orderBy: string, order: string) {
+  try{
+    const purchaseDb = await prisma.purchase.findMany({
+      select: {
+        purchase_id: true,
+        user_id: true,
+        purchased_at: true,
+        store_id: true,
+        total_price: true,
+        item_count: true,
+        purchase_name: true
+      },
+      where: {
+        user_id: user_id_
+      },
+      skip: offset,
+      take: limit,
+      orderBy: {
+        [orderBy]: order
+      }
+    });
+
+    return {success: true, purchases: purchaseDb};
+  }
+  catch (e) {
     return {success: false, code: 500, message: "error while trying to get purchase. "+ e};
   }
 }
