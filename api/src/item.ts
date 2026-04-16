@@ -62,15 +62,15 @@ import { userIsAdmin } from "./db/dbUser.js";
  *          type: number
  *    responses:
  *      201:
- *        description: Returns an item
- *      400:
+ *        description: returns an item
+ *      404:
  *        description: item with provided id not found
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/itemRaw/:id", async (req, res) => {
     const inputNumber = parseInt(req.params.id);
-    if (Number.isNaN(inputNumber)) return res.status(400).json({message: "Input is not a number"});
+    if (Number.isNaN(inputNumber)) return res.status(400).json({message: "input is not a number"});
     const ret = await dbItem.getItemByIdRaw(inputNumber);
 
     if(ret.success) return res.status(201).json(ret.item);
@@ -94,15 +94,15 @@ router.get("/itemRaw/:id", async (req, res) => {
  *          type: number
  *    responses:
  *      201:
- *        description: Returns an item
- *      400:
+ *        description: returns an item
+ *      404:
  *        description: item with provided id not found
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/item/:id", async (req, res) => {
     const inputNumber = parseInt(req.params.id);
-    if (Number.isNaN(inputNumber)) return res.status(400).json({message: "Input is not a number"});
+    if (Number.isNaN(inputNumber)) return res.status(400).json({message: "input is not a number"});
     const ret = await dbItem.getItemById(inputNumber);
 
     if(ret.success) return res.status(201).json(ret.item);
@@ -126,11 +126,9 @@ router.get("/item/:id", async (req, res) => {
  *          type: string
  *    responses:
  *      201:
- *        description: Returns items
- *      400:
- *        description: item with provided name not found
+ *        description: returns items
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/itemByNameExact/:name", async (req, res) => {
     const ret = await dbItem.getItemByNameExact(req.params.name);
@@ -156,11 +154,9 @@ router.get("/itemByNameExact/:name", async (req, res) => {
  *          type: string
  *    responses:
  *      201:
- *        description: Returns items
- *      400:
- *        description: items with provided name not found
+ *        description: returns items
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/searchItemByName/:name", async (req, res) => {
     const ret = await dbItem.searchItemByName(req.params.name);
@@ -186,15 +182,13 @@ router.get("/searchItemByName/:name", async (req, res) => {
  *          type: number
  *    responses:
  *      201:
- *        description: Returns items
- *      400:
- *        description: items with provided type_id not found
+ *        description: returns items
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/itemsByTypeId/:type_id", async (req, res) => {
     const inputNumber = parseInt(req.params.type_id);
-    if (Number.isNaN(inputNumber)) return res.status(400).json({message: "Input is not a number"});
+    if (Number.isNaN(inputNumber)) return res.status(400).json({message: "input is not a number"});
     const ret = await dbItem.getItemByTypeId(inputNumber);
 
     if(ret.success) return res.status(201).json(ret.items);
@@ -218,15 +212,13 @@ router.get("/itemsByTypeId/:type_id", async (req, res) => {
  *          type: number
  *    responses:
  *      201:
- *        description: Returns items
- *      400:
- *        description: items with provided country_id not found
+ *        description: returns items
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/itemsByCountryId/:country_id", async (req, res) => {
     const inputNumber = parseInt(req.params.country_id);
-    if (Number.isNaN(inputNumber)) return res.status(400).json({message: "Input is not a number"});
+    if (Number.isNaN(inputNumber)) return res.status(400).json({message: "input is not a number"});
     const ret = await dbItem.getItemByCountryId(inputNumber);
 
     if(ret.success) return res.status(201).json(ret.items);
@@ -250,15 +242,13 @@ router.get("/itemsByCountryId/:country_id", async (req, res) => {
  *          type: number
  *    responses:
  *      201:
- *        description: Returns items
- *      400:
- *        description: items with provided producer_id not found
+ *        description: returns items
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/itemsByProducerId/:producer_id", async (req, res) => {
     const inputNumber = parseInt(req.params.producer_id);
-    if (Number.isNaN(inputNumber)) return res.status(400).json({message: "Input is not a number"});
+    if (Number.isNaN(inputNumber)) return res.status(400).json({message: "input is not a number"});
     const ret = await dbItem.getItemByProducerId(inputNumber);
 
     if(ret.success) return res.status(201).json(ret.items);
@@ -282,11 +272,9 @@ router.get("/itemsByProducerId/:producer_id", async (req, res) => {
  *          type: string
  *    responses:
  *      201:
- *        description: Returns items
- *      400:
- *        description: items with provided search-string not found
+ *        description: returns items
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/searchItem/:search", async (req, res) => {
     const ret = await dbItem.searchItem(req.params.search);
@@ -306,17 +294,15 @@ router.get("/searchItem/:search", async (req, res) => {
  *      - item
  *    responses:
  *      201:
- *        description: Returns items
- *      400:
- *        description: items not found
+ *        description: returns items
  *      401:
  *        description: unauthorized
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/allItems", authMiddleware, async (req, res) => {
     // @ts-ignore
-    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
+    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
     const ret = await dbItem.getAllItems();
 
     if(ret.success) return res.status(201).json(ret.items);
@@ -359,7 +345,7 @@ router.get("/allItems", authMiddleware, async (req, res) => {
  *                 description: weight/volume etc.
  *               unit:
  *                 type: string
- *                 description: E-Mail-Address
+ *                 description: e-mail-Address
  *               item_producer_id:
  *                 type: number
  *                 description: item producer id
@@ -371,15 +357,15 @@ router.get("/allItems", authMiddleware, async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/item'
  *       400:
- *         description: Missing Inputs
+ *         description: missing Inputs
  *       401:
- *         description: Unauthorized
+ *         description: unauthorized
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.post("/createItem", authMiddleware, async (req, res) => {
     // @ts-ignore
-    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
+    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
     const { name, item_type_id, country_id, value, unit, item_producer_id } = req.body;
     
     if (!name) { return res.status(400).json({ message: "itemname missing" });}
@@ -393,7 +379,7 @@ router.post("/createItem", authMiddleware, async (req, res) => {
 
     const ret = await dbItem.createItem(name, item_type_id, country_id, value, unit, item_producer_id);
 
-    if(ret.success) return res.status(201).json({message: "Item created successfully", item: ret.item});
+    if(ret.success) return res.status(201).json({message: "item created successfully", item: ret.item});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 });
@@ -405,7 +391,7 @@ router.post("/createItem", authMiddleware, async (req, res) => {
  * @swagger
  * /item/changeItem:
  *   put:
- *     summary: changes an existing item
+ *     summary: Changes an existing item
  *     tags: 
  *       - item
  *     requestBody:
@@ -437,7 +423,7 @@ router.post("/createItem", authMiddleware, async (req, res) => {
  *                 description: weight/volume etc.
  *               unit:
  *                 type: string
- *                 description: E-Mail-Address
+ *                 description: e-mail-Address
  *               item_producer_id:
  *                 type: number
  *                 description: item producer id
@@ -449,15 +435,15 @@ router.post("/createItem", authMiddleware, async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/item'
  *       400:
- *         description: Missing Inputs
+ *         description: missing Inputs
  *       401:
- *         description: Unauthorized
+ *         description: unauthorized
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.put("/changeItem", authMiddleware, async (req, res) => {
     // @ts-ignore
-    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
+    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
     const { item_id, name, item_type_id, country_id, value, unit, item_producer_id } = req.body;
     
     if (!name) { return res.status(400).json({ message: "itemname missing" });}
@@ -472,7 +458,7 @@ router.put("/changeItem", authMiddleware, async (req, res) => {
 
     const ret = await dbItem.changeItem(item_id, name, item_type_id, country_id, value, unit, item_producer_id);
 
-    if(ret.success) return res.status(201).json({message: "Item changed successfully", item: ret.item});
+    if(ret.success) return res.status(201).json({message: "item changed successfully", item: ret.item});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 });

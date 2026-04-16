@@ -15,7 +15,7 @@ export async function getStoreById(store_id_: number, user_id_: number) {
       }
     });
 
-    if(storeDb == null) return {success: false, code: 400, message: "store not found"};
+    if(storeDb == null) return {success: false, code: 404, message: "store not found"};
     if(storeDb.user_id != user_id_) return {success: false, code: 403, message: "store belongs to different user"};
     return {success: true, store: storeDb};
   }
@@ -43,7 +43,6 @@ export async function searchStore(search_: string, user_id_: number) {
       }
     });
 
-    if(storeDb[0] == null) return {success: false, code: 400, message: "store not found"};
     return {success: true, stores: storeDb};
   }
   catch (e) {
@@ -67,7 +66,6 @@ export async function searchStoreByName(name_: string, user_id_: number) {
       }
     });
 
-    if(storeDb[0] == null) return {success: false, code: 400, message: "store not found"};
     return {success: true, stores: storeDb};
   }
   catch (e) {
@@ -89,7 +87,6 @@ export async function getStoresOfUser(user_id_: number) {
       }
     });
 
-    if(storeDb[0] == null) return {success: false, code: 400, message: "stores not found"};
     return {success: true, stores: storeDb};
   }
   catch (e) {

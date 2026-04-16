@@ -49,11 +49,11 @@ import { getCountryById } from "./db/dbCountry.js";
  *          type: number
  *    responses:
  *      201:
- *        description: Returns an itemproducer
- *      400:
+ *        description: returns an itemproducer
+ *      404:
  *        description: itemproducer with provided id not found
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/itemProducer/:id", async (req, res) => {
     const inputNumber = parseInt(req.params.id);
@@ -81,11 +81,9 @@ router.get("/itemProducer/:id", async (req, res) => {
  *          type: string
  *    responses:
  *      201:
- *        description: Returns itemproducer
- *      400:
- *        description: itemproducer with provided name not found
+ *        description: returns itemproducer
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/itemProducerByName/:name", async (req, res) => {
     const ret = await dbItemProducer.getItemProducerByName(req.params.name);
@@ -105,11 +103,9 @@ router.get("/itemProducerByName/:name", async (req, res) => {
  *      - itemProducer
  *    responses:
  *      201:
- *        description: Returns all itemproducers
- *      400:
- *        description: itemproducers not found
+ *        description: returns all itemproducers
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/allItemProducers", async (req, res) => {
     const ret = await dbItemProducer.getAllItemProducer();
@@ -151,15 +147,15 @@ router.get("/allItemProducers", async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/itemProducer'
  *       400:
- *         description: Missing Inputs
+ *         description: missing Inputs
  *       401:
- *         description: Unauthorized
+ *         description: unauthorized
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.post("/createItemProducer", authMiddleware, async (req, res) => {
     // @ts-ignore
-    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
+    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
     const { item_producer_name, country_id } = req.body;
     
     if (!item_producer_name) { return res.status(400).json({ message: "itemname missing" });}
@@ -179,7 +175,7 @@ router.post("/createItemProducer", authMiddleware, async (req, res) => {
  * @swagger
  * /itemProducer/changeItemProducer:
  *   put:
- *     summary: change of the itemProducer
+ *     summary: Change of the itemProducer
  *     tags: 
  *       - itemProducer
  *     requestBody:
@@ -207,13 +203,13 @@ router.post("/createItemProducer", authMiddleware, async (req, res) => {
  *       400: 
  *         description: input not found or invalid
  *       401: 
- *         description: Unauthorized
+ *         description: unauthorized
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.put("/changeItemProducer", authMiddleware, async (req, res) => {
     // @ts-ignore
-    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
+    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
     const { item_producer_id, item_producer_name, country_id } = req.body;
 
     if (!item_producer_name) { return res.status(400).json({ message: "itemproducer name missing" });}

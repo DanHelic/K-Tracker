@@ -77,6 +77,31 @@ export async function getPurchaseByIdNoItems(purchase_id_: number, user_id_: num
 }
 
 
+export async function getPurchasesOfUser(user_id_: number) {
+  try{
+    const purchaseDb = await prisma.purchase.findMany({
+      select: {
+        purchase_id: true,
+        user_id: true,
+        purchased_at: true,
+        store_id: true,
+        total_price: true,
+        item_count: true,
+        purchase_name: true
+      },
+      where: {
+        user_id: user_id_
+      }
+    });
+
+    return {success: true, purchases: purchaseDb};
+  }
+  catch (e) {
+    return {success: false, code: 500, message: "error while trying to get purchase. "+ e};
+  }
+}
+
+
 export async function createPurchase(user_id_: number, purchased_at_: string, store_id_: number, total_price_: number, item_count_: number, purchase_name_: string){
     try{
     const newPurchase = await prisma.purchase.create({

@@ -7,14 +7,14 @@ app.use(express.json());
 const router = express.Router();
 export default router;
 
-import * as dbUser from './db/dbUser.js';
+import {userIsAdmin} from './db/dbUser.js';
 import * as dbPurchase from './db/dbPurchase.js';
 
 /**
  * @swagger
  * tags:
  *   name: purchase
- *   description: purchase related enpoints
+ *   description: Purchase related enpoints
  * components:
  *   schemas:
  *     user:
@@ -59,13 +59,13 @@ import * as dbPurchase from './db/dbPurchase.js';
  *          type: number
  *    responses:
  *      201:
- *        description: Returns a purchase
+ *        description: returns a purchase
  *      400:
  *        description: purchase with provided id not found
  *      403:
  *        description: purchase belongs to different user
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/purchase/:id", authMiddleware, async (req, res) => {
     // @ts-ignore
@@ -79,7 +79,7 @@ router.get("/purchase/:id", authMiddleware, async (req, res) => {
 
 /** 
  * @swagger 
- * /purchase/purchaseNoItems/{id}:
+ * /purchase/purchaseWithoutItems/{id}:
  *  get:
  *    summary: Get the purchase with the provided id without the items
  *    tags:
@@ -92,19 +92,54 @@ router.get("/purchase/:id", authMiddleware, async (req, res) => {
  *          type: number
  *    responses:
  *      201:
- *        description: Returns a purchase without items
+ *        description: returns a purchase without items
  *      400:
  *        description: purchase with provided id not found
  *      403:
  *        description: purchase belongs to different user
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
-router.get("/purchaseNoItems/:id", authMiddleware, async (req, res) => {
+router.get("/purchaseWithoutItems/:id", authMiddleware, async (req, res) => {
     // @ts-ignore
     const ret = await dbPurchase.getPurchaseByIdNoItems(parseInt(req.params.id), req.user.userId);
 
     if(ret.success) return res.status(201).json(ret.purchase);
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+});
+
+
+/** 
+ * @swagger 
+ * /purchase/PurchasesByUser/{id}:
+ *  get:
+ *    summary: Get all purchases of current user (admin only)
+ *    tags:
+ *      - purchase
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        description: user id
+ *        required: true
+ *        schema:
+ *          type: number
+ *    responses:
+ *      201:
+ *        description: returns purchases
+ *      403:
+ *        description: unauthorized
+ *      500:
+ *        description: internal error
+*/
+router.get("/PurchasesByUser/:id", authMiddleware, async (req, res) => {
+    // @ts-ignore
+    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
+
+    // @ts-ignore
+    const ret = await dbPurchase.getPurchasesOfUser(parseInt(req.params.id));
+
+    if(ret.success) return res.status(201).json(ret.purchases);
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 });
@@ -149,11 +184,11 @@ router.get("/purchaseNoItems/:id", authMiddleware, async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/purchase'
  *       400:
- *         description: Missing Inputs
+ *         description: missing Inputs
  *       403:
  *         description: unauthorized
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.post("/createPurchase", authMiddleware, async (req, res) => {
     const {purchased_at, store_id, total_price, item_count, purchase_name} = req.body;

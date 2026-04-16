@@ -14,7 +14,7 @@ import { userIsAdmin } from "./db/dbUser.js";
  * @swagger
  * tags:
  *   name: itemType
- *   description: itemtype related endpoints
+ *   description: Itemtype related endpoints
  * components:
  *   schemas:
  *     itemType:
@@ -45,15 +45,15 @@ import { userIsAdmin } from "./db/dbUser.js";
  *          type: number
  *    responses:
  *      201:
- *        description: Returns an itemtype
- *      400:
+ *        description: returns an itemtype
+ *      404:
  *        description: itemtype with provided id not found
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/itemType/:id", async (req, res) => {
     const inputNumber = parseInt(req.params.id);
-    if (Number.isNaN(inputNumber)) return res.status(400).json({message: "Input is not a number"});
+    if (Number.isNaN(inputNumber)) return res.status(400).json({message: "input is not a number"});
     const ret = await dbItemType.getItemTypeById(inputNumber);
 
     if(ret.success) return res.status(201).json(ret.item);
@@ -77,11 +77,9 @@ router.get("/itemType/:id", async (req, res) => {
  *          type: string
  *    responses:
  *      201:
- *        description: Returns itemtypes
- *      400:
- *        description: itemtype with provided name not found
+ *        description: returns itemtypes
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/itemTypeByName/:name", async (req, res) => {
     const ret = await dbItemType.getItemTypeByName(req.params.name);
@@ -121,15 +119,15 @@ router.get("/itemTypeByName/:name", async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/itemType'
  *       400:
- *         description: Missing Inputs
+ *         description: missing Inputs
  *       401:
- *         description: Unauthorized
+ *         description: unauthorized
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.post("/createItemType", authMiddleware, async (req, res) => {
     // @ts-ignore
-    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
+    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
     const { item_type_name } = req.body;
     
     if (!item_type_name) { return res.status(400).json({ message: "itemname missing" });}
@@ -148,7 +146,7 @@ router.post("/createItemType", authMiddleware, async (req, res) => {
  * @swagger
  * /itemType/changeItemType:
  *   patch:
- *     summary: change of the itemtype
+ *     summary: Change of the itemtype
  *     tags: 
  *       - itemType
  *     requestBody:
@@ -173,13 +171,13 @@ router.post("/createItemType", authMiddleware, async (req, res) => {
  *       400: 
  *         description: input not found or invalid
  *       401: 
- *         description: Unauthorized
+ *         description: unauthorized
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.patch("/changeItemType", authMiddleware, async (req, res) => {
     // @ts-ignore
-    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
+    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
     const { item_type_id, item_type_name } = req.body;
 
     if (!item_type_id) return res.status(400).json({message: "item_Type_Id not found"});

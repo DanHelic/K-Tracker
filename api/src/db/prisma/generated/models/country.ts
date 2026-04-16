@@ -37,19 +37,22 @@ export type CountrySumAggregateOutputType = {
 export type CountryMinAggregateOutputType = {
   country_id: number | null
   country_code: string | null
-  name: string | null
+  nameEN: string | null
+  nameDE: string | null
 }
 
 export type CountryMaxAggregateOutputType = {
   country_id: number | null
   country_code: string | null
-  name: string | null
+  nameEN: string | null
+  nameDE: string | null
 }
 
 export type CountryCountAggregateOutputType = {
   country_id: number
   country_code: number
-  name: number
+  nameEN: number
+  nameDE: number
   _all: number
 }
 
@@ -65,19 +68,22 @@ export type CountrySumAggregateInputType = {
 export type CountryMinAggregateInputType = {
   country_id?: true
   country_code?: true
-  name?: true
+  nameEN?: true
+  nameDE?: true
 }
 
 export type CountryMaxAggregateInputType = {
   country_id?: true
   country_code?: true
-  name?: true
+  nameEN?: true
+  nameDE?: true
 }
 
 export type CountryCountAggregateInputType = {
   country_id?: true
   country_code?: true
-  name?: true
+  nameEN?: true
+  nameDE?: true
   _all?: true
 }
 
@@ -170,7 +176,8 @@ export type countryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type CountryGroupByOutputType = {
   country_id: number
   country_code: string
-  name: string
+  nameEN: string
+  nameDE: string
   _count: CountryCountAggregateOutputType | null
   _avg: CountryAvgAggregateOutputType | null
   _sum: CountrySumAggregateOutputType | null
@@ -199,7 +206,8 @@ export type countryWhereInput = {
   NOT?: Prisma.countryWhereInput | Prisma.countryWhereInput[]
   country_id?: Prisma.IntFilter<"country"> | number
   country_code?: Prisma.StringFilter<"country"> | string
-  name?: Prisma.StringFilter<"country"> | string
+  nameEN?: Prisma.StringFilter<"country"> | string
+  nameDE?: Prisma.StringFilter<"country"> | string
   items?: Prisma.ItemListRelationFilter
   itemProducers?: Prisma.Item_producerListRelationFilter
 }
@@ -207,7 +215,8 @@ export type countryWhereInput = {
 export type countryOrderByWithRelationInput = {
   country_id?: Prisma.SortOrder
   country_code?: Prisma.SortOrder
-  name?: Prisma.SortOrder
+  nameEN?: Prisma.SortOrder
+  nameDE?: Prisma.SortOrder
   items?: Prisma.itemOrderByRelationAggregateInput
   itemProducers?: Prisma.item_producerOrderByRelationAggregateInput
 }
@@ -215,18 +224,20 @@ export type countryOrderByWithRelationInput = {
 export type countryWhereUniqueInput = Prisma.AtLeast<{
   country_id?: number
   country_code?: string
-  name?: string
+  nameEN?: string
+  nameDE?: string
   AND?: Prisma.countryWhereInput | Prisma.countryWhereInput[]
   OR?: Prisma.countryWhereInput[]
   NOT?: Prisma.countryWhereInput | Prisma.countryWhereInput[]
   items?: Prisma.ItemListRelationFilter
   itemProducers?: Prisma.Item_producerListRelationFilter
-}, "country_id" | "country_code" | "name">
+}, "country_id" | "country_code" | "nameEN" | "nameDE">
 
 export type countryOrderByWithAggregationInput = {
   country_id?: Prisma.SortOrder
   country_code?: Prisma.SortOrder
-  name?: Prisma.SortOrder
+  nameEN?: Prisma.SortOrder
+  nameDE?: Prisma.SortOrder
   _count?: Prisma.countryCountOrderByAggregateInput
   _avg?: Prisma.countryAvgOrderByAggregateInput
   _max?: Prisma.countryMaxOrderByAggregateInput
@@ -240,12 +251,14 @@ export type countryScalarWhereWithAggregatesInput = {
   NOT?: Prisma.countryScalarWhereWithAggregatesInput | Prisma.countryScalarWhereWithAggregatesInput[]
   country_id?: Prisma.IntWithAggregatesFilter<"country"> | number
   country_code?: Prisma.StringWithAggregatesFilter<"country"> | string
-  name?: Prisma.StringWithAggregatesFilter<"country"> | string
+  nameEN?: Prisma.StringWithAggregatesFilter<"country"> | string
+  nameDE?: Prisma.StringWithAggregatesFilter<"country"> | string
 }
 
 export type countryCreateInput = {
   country_code: string
-  name: string
+  nameEN: string
+  nameDE: string
   items?: Prisma.itemCreateNestedManyWithoutCountryInput
   itemProducers?: Prisma.item_producerCreateNestedManyWithoutCountryInput
 }
@@ -253,14 +266,16 @@ export type countryCreateInput = {
 export type countryUncheckedCreateInput = {
   country_id?: number
   country_code: string
-  name: string
+  nameEN: string
+  nameDE: string
   items?: Prisma.itemUncheckedCreateNestedManyWithoutCountryInput
   itemProducers?: Prisma.item_producerUncheckedCreateNestedManyWithoutCountryInput
 }
 
 export type countryUpdateInput = {
   country_code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEN?: Prisma.StringFieldUpdateOperationsInput | string
+  nameDE?: Prisma.StringFieldUpdateOperationsInput | string
   items?: Prisma.itemUpdateManyWithoutCountryNestedInput
   itemProducers?: Prisma.item_producerUpdateManyWithoutCountryNestedInput
 }
@@ -268,7 +283,8 @@ export type countryUpdateInput = {
 export type countryUncheckedUpdateInput = {
   country_id?: Prisma.IntFieldUpdateOperationsInput | number
   country_code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEN?: Prisma.StringFieldUpdateOperationsInput | string
+  nameDE?: Prisma.StringFieldUpdateOperationsInput | string
   items?: Prisma.itemUncheckedUpdateManyWithoutCountryNestedInput
   itemProducers?: Prisma.item_producerUncheckedUpdateManyWithoutCountryNestedInput
 }
@@ -276,18 +292,21 @@ export type countryUncheckedUpdateInput = {
 export type countryCreateManyInput = {
   country_id?: number
   country_code: string
-  name: string
+  nameEN: string
+  nameDE: string
 }
 
 export type countryUpdateManyMutationInput = {
   country_code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEN?: Prisma.StringFieldUpdateOperationsInput | string
+  nameDE?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type countryUncheckedUpdateManyInput = {
   country_id?: Prisma.IntFieldUpdateOperationsInput | number
   country_code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEN?: Prisma.StringFieldUpdateOperationsInput | string
+  nameDE?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type CountryNullableScalarRelationFilter = {
@@ -298,7 +317,8 @@ export type CountryNullableScalarRelationFilter = {
 export type countryCountOrderByAggregateInput = {
   country_id?: Prisma.SortOrder
   country_code?: Prisma.SortOrder
-  name?: Prisma.SortOrder
+  nameEN?: Prisma.SortOrder
+  nameDE?: Prisma.SortOrder
 }
 
 export type countryAvgOrderByAggregateInput = {
@@ -308,13 +328,15 @@ export type countryAvgOrderByAggregateInput = {
 export type countryMaxOrderByAggregateInput = {
   country_id?: Prisma.SortOrder
   country_code?: Prisma.SortOrder
-  name?: Prisma.SortOrder
+  nameEN?: Prisma.SortOrder
+  nameDE?: Prisma.SortOrder
 }
 
 export type countryMinOrderByAggregateInput = {
   country_id?: Prisma.SortOrder
   country_code?: Prisma.SortOrder
-  name?: Prisma.SortOrder
+  nameEN?: Prisma.SortOrder
+  nameDE?: Prisma.SortOrder
 }
 
 export type countrySumOrderByAggregateInput = {
@@ -355,14 +377,16 @@ export type countryUpdateOneWithoutItemProducersNestedInput = {
 
 export type countryCreateWithoutItemsInput = {
   country_code: string
-  name: string
+  nameEN: string
+  nameDE: string
   itemProducers?: Prisma.item_producerCreateNestedManyWithoutCountryInput
 }
 
 export type countryUncheckedCreateWithoutItemsInput = {
   country_id?: number
   country_code: string
-  name: string
+  nameEN: string
+  nameDE: string
   itemProducers?: Prisma.item_producerUncheckedCreateNestedManyWithoutCountryInput
 }
 
@@ -384,27 +408,31 @@ export type countryUpdateToOneWithWhereWithoutItemsInput = {
 
 export type countryUpdateWithoutItemsInput = {
   country_code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEN?: Prisma.StringFieldUpdateOperationsInput | string
+  nameDE?: Prisma.StringFieldUpdateOperationsInput | string
   itemProducers?: Prisma.item_producerUpdateManyWithoutCountryNestedInput
 }
 
 export type countryUncheckedUpdateWithoutItemsInput = {
   country_id?: Prisma.IntFieldUpdateOperationsInput | number
   country_code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEN?: Prisma.StringFieldUpdateOperationsInput | string
+  nameDE?: Prisma.StringFieldUpdateOperationsInput | string
   itemProducers?: Prisma.item_producerUncheckedUpdateManyWithoutCountryNestedInput
 }
 
 export type countryCreateWithoutItemProducersInput = {
   country_code: string
-  name: string
+  nameEN: string
+  nameDE: string
   items?: Prisma.itemCreateNestedManyWithoutCountryInput
 }
 
 export type countryUncheckedCreateWithoutItemProducersInput = {
   country_id?: number
   country_code: string
-  name: string
+  nameEN: string
+  nameDE: string
   items?: Prisma.itemUncheckedCreateNestedManyWithoutCountryInput
 }
 
@@ -426,14 +454,16 @@ export type countryUpdateToOneWithWhereWithoutItemProducersInput = {
 
 export type countryUpdateWithoutItemProducersInput = {
   country_code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEN?: Prisma.StringFieldUpdateOperationsInput | string
+  nameDE?: Prisma.StringFieldUpdateOperationsInput | string
   items?: Prisma.itemUpdateManyWithoutCountryNestedInput
 }
 
 export type countryUncheckedUpdateWithoutItemProducersInput = {
   country_id?: Prisma.IntFieldUpdateOperationsInput | number
   country_code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEN?: Prisma.StringFieldUpdateOperationsInput | string
+  nameDE?: Prisma.StringFieldUpdateOperationsInput | string
   items?: Prisma.itemUncheckedUpdateManyWithoutCountryNestedInput
 }
 
@@ -480,7 +510,8 @@ export type CountryCountOutputTypeCountItemProducersArgs<ExtArgs extends runtime
 export type countrySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   country_id?: boolean
   country_code?: boolean
-  name?: boolean
+  nameEN?: boolean
+  nameDE?: boolean
   items?: boolean | Prisma.country$itemsArgs<ExtArgs>
   itemProducers?: boolean | Prisma.country$itemProducersArgs<ExtArgs>
   _count?: boolean | Prisma.CountryCountOutputTypeDefaultArgs<ExtArgs>
@@ -489,22 +520,25 @@ export type countrySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type countrySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   country_id?: boolean
   country_code?: boolean
-  name?: boolean
+  nameEN?: boolean
+  nameDE?: boolean
 }, ExtArgs["result"]["country"]>
 
 export type countrySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   country_id?: boolean
   country_code?: boolean
-  name?: boolean
+  nameEN?: boolean
+  nameDE?: boolean
 }, ExtArgs["result"]["country"]>
 
 export type countrySelectScalar = {
   country_id?: boolean
   country_code?: boolean
-  name?: boolean
+  nameEN?: boolean
+  nameDE?: boolean
 }
 
-export type countryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"country_id" | "country_code" | "name", ExtArgs["result"]["country"]>
+export type countryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"country_id" | "country_code" | "nameEN" | "nameDE", ExtArgs["result"]["country"]>
 export type countryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   items?: boolean | Prisma.country$itemsArgs<ExtArgs>
   itemProducers?: boolean | Prisma.country$itemProducersArgs<ExtArgs>
@@ -522,7 +556,8 @@ export type $countryPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     country_id: number
     country_code: string
-    name: string
+    nameEN: string
+    nameDE: string
   }, ExtArgs["result"]["country"]>
   composites: {}
 }
@@ -950,7 +985,8 @@ export interface Prisma__countryClient<T, Null = never, ExtArgs extends runtime.
 export interface countryFieldRefs {
   readonly country_id: Prisma.FieldRef<"country", 'Int'>
   readonly country_code: Prisma.FieldRef<"country", 'String'>
-  readonly name: Prisma.FieldRef<"country", 'String'>
+  readonly nameEN: Prisma.FieldRef<"country", 'String'>
+  readonly nameDE: Prisma.FieldRef<"country", 'String'>
 }
     
 

@@ -52,6 +52,7 @@ export async function getUserById(userId_: number) {
       }
     });
 
+    if(userDb == null) return {success: false, code: 404, message: "user not found."};
     const user = userT.fromDb(userDb);
     return {success: true, user};
   }

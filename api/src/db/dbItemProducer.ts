@@ -14,7 +14,7 @@ export async function getItemProducerById(item_producer_id_: number) {
       }
     });
 
-    if(itemProducerDB == null) return {success: false, code: 400, message: "itemproducer with provided id not found"};
+    if(itemProducerDB == null) return {success: false, code: 404, message: "itemproducer with provided id not found"};
     return {success: true, itemProducer: itemProducerDB};
   }
   catch (e) {
@@ -36,7 +36,6 @@ export async function getItemProducerByName(item_producer_name_: string) {
       }
     });
 
-    if(itemProducersDB[0] == null) return {success: false, code: 400, message: "itemproducer with provided name not found"};
     return {success: true, itemProducers: itemProducersDB};
   }
   catch (e) {
@@ -58,7 +57,7 @@ export async function getItemProducerByNameExact(item_producer_name_: string) {
       }
     });
 
-    if(itemProducersDB == null) return {success: false, code: 400, message: "itemproducer with provided name not found"};
+    if(itemProducersDB == null) return {success: false, code: 404, message: "itemproducer with provided name not found"};
     return {success: true, itemProducers: itemProducersDB};
   }
   catch (e) {
@@ -77,7 +76,6 @@ export async function getAllItemProducer() {
       }
     });
 
-    if(itemProducersDB[0] == null) return {success: false, code: 400, message: "itemproducers not found"};
     return {success: true, itemProducers: itemProducersDB};
   }
   catch (e) {

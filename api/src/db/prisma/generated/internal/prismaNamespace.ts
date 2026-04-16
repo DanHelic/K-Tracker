@@ -1116,7 +1116,8 @@ export type Item_typeScalarFieldEnum = (typeof Item_typeScalarFieldEnum)[keyof t
 export const CountryScalarFieldEnum = {
   country_id: 'country_id',
   country_code: 'country_code',
-  name: 'name'
+  nameEN: 'nameEN',
+  nameDE: 'nameDE'
 } as const
 
 export type CountryScalarFieldEnum = (typeof CountryScalarFieldEnum)[keyof typeof CountryScalarFieldEnum]

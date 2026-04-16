@@ -44,11 +44,11 @@ import * as tokenStore from "./session/tokenStore.js";
  *                 description: password
  *     responses:
  *       201:
- *         description: Login successful
+ *         description: login successful
  *       401: 
- *         description: Password or username incorrect
+ *         description: password or username incorrect
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.post("/login", async (req, res) => {
     const ret = await checkPassword(req.body.user_name, req.body.password);
@@ -63,7 +63,7 @@ router.post("/login", async (req, res) => {
 
     if(ret.success){
         const updateLastLogin = await setLastLogin(req.body.user_name);
-        if(updateLastLogin.success) return res.status(201).json({message: "Login successful", accessToken: accessToken });
+        if(updateLastLogin.success) return res.status(201).json({message: "login successful", accessToken: accessToken });
     }
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
@@ -74,7 +74,7 @@ router.post("/login", async (req, res) => {
  * @swagger
  * /auth/refresh:
  *   post:
- *     summary: creates a new access token
+ *     summary: Creates a new access token
  *     tags: [auth]
  *     responses:
  *       200:

@@ -1,8 +1,4 @@
 import express from "express";
-import swaggerUi from "swagger-ui-express";
-import swaggerJsDoc from "swagger-jsdoc";
-//const swaggerJsDoc = require("swagger-jsdoc"); //alt fix
-import argon2 from "argon2";
 import { authMiddleware } from "./session/authMiddleWare.js";
 
 const app = express();
@@ -10,8 +6,6 @@ app.use(express.json());
 
 const router = express.Router();
 export default router;
-
-//import { getAllUsers, getUserById, createUser, userNameAvailable, emailAvailable, checkPassword, changeUsername, changePassword, changeEmail, setLastLogin, changeName, userIsAdmin } from './db/dbUser.js';
 
 import * as dbUser from './db/dbUser.js';
 
@@ -65,11 +59,11 @@ import * as dbUser from './db/dbUser.js';
  *      - user
  *    responses:
  *      201:
- *        description: Returns all users
+ *        description: returns all users
  *      401:
  *        description: unauthorized
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/users", authMiddleware, async (req, res) => {
     // @ts-ignore
@@ -91,9 +85,9 @@ router.get("/users", authMiddleware, async (req, res) => {
  *      - user
  *    responses:
  *      200:
- *        description: Returns the User with the specified id
+ *        description: returns the User with the specified id
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/user", authMiddleware, async (req, res) => {
     // @ts-ignore
@@ -125,13 +119,13 @@ router.get("/user", authMiddleware, async (req, res) => {
  *             properties:
  *               user_name:
  *                 type: string
- *                 description: Username
+ *                 description: username
  *               password:
  *                 type: string
  *                 description: password
  *               email:
  *                 type: string
- *                 description: E-Mail-Address
+ *                 description: e-mail-address
  *               first_name:
  *                 type: string
  *                 description: first name
@@ -140,15 +134,15 @@ router.get("/user", authMiddleware, async (req, res) => {
  *                 description: last name
  *     responses:
  *       201:
- *         description: User created successfully
+ *         description: user created successfully
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/user'
  *       400:
- *         description: Missing Inputs
+ *         description: missing Inputs
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.post("/createUser", async (req, res) => {
     const { user_name, password, email, first_name, last_name } = req.body;
@@ -174,7 +168,7 @@ router.post("/createUser", async (req, res) => {
  * @swagger
  * /user/changeUsername:
  *   patch:
- *     summary: change of the username
+ *     summary: Change of the username
  *     tags: 
  *       - user
  *     requestBody:
@@ -190,24 +184,24 @@ router.post("/createUser", async (req, res) => {
  *             properties:
  *               old_user_name:
  *                 type: string
- *                 description: Current Username
+ *                 description: current Username
  *               new_user_name:
  *                 type: string
- *                 description: New Username
+ *                 description: new Username
  *               password:
  *                 type: string
  *                 description: password
  *     responses:
  *       201:
- *         description: Username change successful
+ *         description: username change successful
  *       400: 
- *         description: Old and New Username are the same
+ *         description: old and New Username are the same
  *       401: 
- *         description: Username or password incorrect
+ *         description: username or password incorrect
  *       409: 
- *         description: Username not available
+ *         description: username not available
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.patch("/changeUsername", authMiddleware, async (req, res) => {
     if (req.body.old_user_name==req.body.new_user_name) return res.status(400).json({message: "Old and New Username are the same"});
@@ -228,7 +222,7 @@ router.patch("/changeUsername", authMiddleware, async (req, res) => {
  * @swagger
  * /user/changePassword:
  *   patch:
- *     summary: change of the password
+ *     summary: Change of the password
  *     tags: [user]
  *     requestBody:
  *       required: true
@@ -243,7 +237,7 @@ router.patch("/changeUsername", authMiddleware, async (req, res) => {
  *             properties:
  *               user_name:
  *                 type: string
- *                 description: Username
+ *                 description: username
  *               old_password:
  *                 type: string
  *                 description: current password
@@ -252,13 +246,13 @@ router.patch("/changeUsername", authMiddleware, async (req, res) => {
  *                 description: new password
  *     responses:
  *       201:
- *         description: Password change successful
+ *         description: password change successful
  *       400: 
- *         description: Old and New Password are the same
+ *         description: old and New Password are the same
  *       401: 
- *         description: Username or password incorrect
+ *         description: username or password incorrect
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.patch("/changePassword", authMiddleware, async (req, res) => {
     if (req.body.old_password==req.body.new_password) return res.status(400).json({message: "Old and New Password are the same"});
@@ -277,7 +271,7 @@ router.patch("/changePassword", authMiddleware, async (req, res) => {
  * @swagger
  * /user/changeEmail:
  *   patch:
- *     summary: change of the email
+ *     summary: Change of the email
  *     tags: [user]
  *     requestBody:
  *       required: true
@@ -292,7 +286,7 @@ router.patch("/changePassword", authMiddleware, async (req, res) => {
  *             properties:
  *               user_name:
  *                 type: string
- *                 description: Username
+ *                 description: username
  *               password:
  *                 type: string
  *                 description: current password
@@ -301,13 +295,13 @@ router.patch("/changePassword", authMiddleware, async (req, res) => {
  *                 description: new email
  *     responses:
  *       201:
- *         description: Email change successful
+ *         description: email change successful
  *       401: 
- *         description: Username or password incorrect
+ *         description: username or password incorrect
  *       409: 
- *         description: Email already in use
+ *         description: email already in use
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.patch("/changeEmail", authMiddleware, async (req, res) => {
     const pwCheck = await dbUser.checkPassword(req.body.user_name, req.body.password);
@@ -328,7 +322,7 @@ router.patch("/changeEmail", authMiddleware, async (req, res) => {
  * @swagger
  * /user/changeName:
  *   patch:
- *     summary: change of the first_name and last_name
+ *     summary: Change of the first_name and last_name
  *     tags: [user]
  *     requestBody:
  *       required: true
@@ -348,17 +342,17 @@ router.patch("/changeEmail", authMiddleware, async (req, res) => {
  *                 description: new last name
  *     responses:
  *       201:
- *         description: Name change successful
+ *         description: name change successful
  *       401: 
- *         description: Username not found
+ *         description: username not found
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.patch("/changeName", authMiddleware, async (req, res) => {
     // @ts-ignore
     const ret = await changeName(req.user.userId, req.body.first_name, req.body.last_name);
 
-    if(ret.success) return res.status(201).json({message: "Name change successful"});
+    if(ret.success) return res.status(201).json({message: "name change successful"});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 })

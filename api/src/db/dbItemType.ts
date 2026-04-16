@@ -13,7 +13,7 @@ export async function getItemTypeById(item_type_id_: number) {
       }
     });
 
-    if(itemDB == null) return {success: false, code: 400, message: "itemtype with provided id not found"};
+    if(itemDB == null) return {success: false, code: 404, message: "itemtype with provided id not found"};
     return {success: true, item: itemDB};
   }
   catch (e) {
@@ -34,7 +34,7 @@ export async function getItemTypeByName(item_type_name_: string) {
       }
     });
 
-    if(itemDB == null) return {success: false, code: 400, message: "itemtype with provided name not found"};
+    if(itemDB == null) return {success: false, code: 404, message: "itemtype with provided name not found"};
     return {success: true, item: itemDB};
   }
   catch (e) {
@@ -55,7 +55,7 @@ export async function getItemTypeByNameExact(item_type_name_: string) {
       }
     });
 
-    if(itemDB == null) return {success: false, code: 400, message: "itemtype with provided name not found"};
+    if(itemDB == null) return {success: false, code: 404, message: "itemtype with provided name not found"};
     return {success: true, item: itemDB};
   }
   catch (e) {
@@ -73,7 +73,6 @@ export async function getAllItemTypes() {
       }
     });
 
-    if(itemDB == null) return {success: false, code: 400, message: "itemtypes not found"};
     return {success: true, item: itemDB};
   }
   catch (e) {

@@ -6,14 +6,15 @@ export async function getCountryById(country_id_: number) {
       select: {
         country_id: true,
         country_code: true,
-        name: true
+        nameEN: true,
+        nameDE: true
       },
       where: {
         country_id: country_id_
       }
     });
 
-    if(countryDb == null) return {success: false, code: 400, message: "Country with provided id not found"};
+    if(countryDb == null) return {success: false, code: 404, message: "Country with provided id not found"};
     return {success: true, country: countryDb};
   }
   catch (e) {
@@ -28,14 +29,15 @@ export async function getCountryByCode(country_code_: string) {
       select: {
         country_id: true,
         country_code: true,
-        name: true
+        nameEN: true,
+        nameDE: true
       },
       where: {
         country_code: country_code_
       }
     });
 
-    if(countryDb == null) return {success: false, code: 400, message: "Country with provided code not found"};
+    if(countryDb == null) return {success: false, code: 404, message: "Country with provided code not found"};
     return {success: true, country: countryDb};
   }
   catch (e) {
@@ -50,14 +52,44 @@ export async function getCountryByName(name_: string) {
       select: {
         country_id: true,
         country_code: true,
-        name: true
+        nameEN: true,
+        nameDE: true
       },
       where: {
-        name: name_
+        OR: [
+          {nameEN: name_},
+          {nameDE: name_}
+        ]
       }
     });
 
-    if(countryDb == null) return {success: false, code: 400, message: "Country with provided name not found"};
+    if(countryDb == null) return {success: false, code: 404, message: "Country with provided name not found"};
+    return {success: true, country: countryDb};
+  }
+  catch (e) {
+    return {success: false, code: 500, message: "error while trying to get country. "+ e};
+  }
+}
+
+
+export async function searchCountryByName(name_: string) {
+  try{
+    const countryDb = await prisma.country.findFirst({
+      select: {
+        country_id: true,
+        country_code: true,
+        nameEN: true,
+        nameDE: true
+      },
+      where: {
+        OR: [
+          {nameEN: {contains: name_, mode: "insensitive"}},
+          {nameDE: {contains: name_, mode: "insensitive"}}
+        ]
+      }
+    });
+
+    if(countryDb == null) return {success: false, code: 404, message: "Country with provided name not found"};
     return {success: true, country: countryDb};
   }
   catch (e) {
@@ -72,13 +104,13 @@ export async function getAllCountries() {
       select: {
         country_id: true,
         country_code: true,
-        name: true
+        nameEN: true,
+        nameDE: true
       },
       where: {
       }
     });
 
-    if(countryDb == null) return {success: false, code: 400, message: "No Country found"};
     return {success: true, countries: countryDb};
   }
   catch (e) {
@@ -87,12 +119,13 @@ export async function getAllCountries() {
 }
 
 
-export async function createCountry(country_code_: string, name_: string) {
+export async function createCountry(country_code_: string, nameEN_: string, nameDE_: string) {
   try{
     const newCountry = await prisma.country.create({
       data: {
         country_code: country_code_,
-        name: name_
+        nameEN: nameEN_,
+        nameDE: nameDE_
       },
     });
 
@@ -104,7 +137,7 @@ export async function createCountry(country_code_: string, name_: string) {
 }
 
 
-export async function updateCountry(country_id_: number, country_code_: string, name_: string) {
+export async function updateCountry(country_id_: number, country_code_: string, nameEN_: string, nameDE_: string) {
   try{
     const newCountry = await prisma.country.update({
       where: {
@@ -112,7 +145,8 @@ export async function updateCountry(country_id_: number, country_code_: string, 
       },
       data: {
         country_code: country_code_,
-        name: name_
+        nameEN: nameEN_,
+        nameDE: nameDE_
       },
     });
 

@@ -18,7 +18,7 @@ export async function getItemByIdRaw(item_id_: number) {
       }
     });
 
-    if(itemDB == null) return {success: false, code: 400, message: "item with provided id not found"};
+    if(itemDB == null) return {success: false, code: 404, message: "item with provided id not found"};
     return {success: true, item: itemDB};
   }
   catch (e) {
@@ -45,7 +45,7 @@ export async function getItemById(item_id_: number) {
       }
     });
 
-    if(itemDB == null) return {success: false, code: 400, message: "item with provided id not found"};
+    if(itemDB == null) return {success: false, code: 404, message: "item with provided id not found"};
     return {success: true, item: itemDB};
   }
   catch (e) {
@@ -72,7 +72,6 @@ export async function getItemByNameExact(item_name_: string) {
       }
     });
 
-    if(itemDB[0] == null) return {success: false, code: 400, message: "item with provided name not found"};
     return {success: true, items: itemDB};
   }
   catch (e) {
@@ -99,7 +98,6 @@ export async function searchItemByName(item_name_: string) {
       }
     });
 
-    if(itemDB[0] == null) return {success: false, code: 400, message: "item with provided name not found"};
     return {success: true, items: itemDB};
   }
   catch (e) {
@@ -126,7 +124,6 @@ export async function getItemByTypeId(item_type_id_: number) {
       }
     });
 
-    if(itemDB[0] == null) return {success: false, code: 400, message: "item with provided type_id not found"};
     return {success: true, items: itemDB};
   }
   catch (e) {
@@ -153,7 +150,6 @@ export async function getItemByCountryId(country_id_: number) {
       }
     });
 
-    if(itemDB[0] == null) return {success: false, code: 400, message: "item with provided country_id not found"};
     return {success: true, items: itemDB};
   }
   catch (e) {
@@ -180,7 +176,6 @@ export async function getItemByProducerId(producer_id_: number) {
       }
     });
 
-    if(itemDB[0] == null) return {success: false, code: 400, message: "item with provided producer_id not found"};
     return {success: true, items: itemDB};
   }
   catch (e) {
@@ -211,7 +206,6 @@ export async function searchItem(search_: string) {
       }
     });
 
-    if(itemDB[0] == null) return {success: false, code: 400, message: "item with provided search-string not found"};
     return {success: true, items: itemDB};
   }
   catch (e) {
@@ -235,7 +229,6 @@ export async function getAllItems() {
       }
     });
 
-    if(itemDB[0] == null) return {success: false, code: 400, message: "items not found"};
     return {success: true, items: itemDB};
   }
   catch (e) {

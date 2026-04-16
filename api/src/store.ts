@@ -51,13 +51,13 @@ import { userIsAdmin } from "./db/dbUser.js";
  *          type: number
  *    responses:
  *      201:
- *        description: Returns a store
- *      400:
+ *        description: returns a store
+ *      404:
  *        description: store with provided id not found
  *      403:
  *        description: store belongs to different user
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/store/:id", authMiddleware, async (req, res) => {
     // @ts-ignore
@@ -84,11 +84,9 @@ router.get("/store/:id", authMiddleware, async (req, res) => {
  *          type: string
  *    responses:
  *      201:
- *        description: Returns stores
- *      400:
- *        description: store with provided name not found
+ *        description: returns stores
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/storeByName/:name", authMiddleware, async (req, res) => {
     // @ts-ignore
@@ -115,11 +113,9 @@ router.get("/storeByName/:name", authMiddleware, async (req, res) => {
  *          type: string
  *    responses:
  *      201:
- *        description: Returns stores
- *      400:
- *        description: store with provided search not found
+ *        description: returns stores
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/searchStore/:search", authMiddleware, async (req, res) => {
     // @ts-ignore
@@ -140,9 +136,9 @@ router.get("/searchStore/:search", authMiddleware, async (req, res) => {
  *      - store
  *    responses:
  *      201:
- *        description: Returns stores
+ *        description: returns stores
  *      500:
- *        description: Internal error
+ *        description: internal error
 */
 router.get("/storesByUser", authMiddleware, async (req, res) => {
     // @ts-ignore
@@ -186,11 +182,11 @@ router.get("/storesByUser", authMiddleware, async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/store'
  *       400:
- *         description: Missing Inputs
+ *         description: missing Inputs
  *       403:
  *         description: unauthorized
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.post("/createStore", authMiddleware, async (req, res) => {
     const {name, location} = req.body;
@@ -210,7 +206,7 @@ router.post("/createStore", authMiddleware, async (req, res) => {
  * @swagger
  * /store/changeName:
  *   post:
- *     summary: change name of Store
+ *     summary: Change name of Store
  *     tags:
  *       - store
  *     requestBody:
@@ -237,11 +233,11 @@ router.post("/createStore", authMiddleware, async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/store'
  *       400:
- *         description: Missing Inputs
+ *         description: missing Inputs
  *       403:
  *         description: unauthorized
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.post("/changeName", authMiddleware, async (req, res) => {
     const {store_id, name} = req.body;
@@ -263,7 +259,7 @@ router.post("/changeName", authMiddleware, async (req, res) => {
  * @swagger
  * /store/changeLocation:
  *   post:
- *     summary: change location of Store
+ *     summary: Change location of Store
  *     tags:
  *       - store
  *     requestBody:
@@ -290,11 +286,11 @@ router.post("/changeName", authMiddleware, async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/store'
  *       400:
- *         description: Missing Inputs
+ *         description: missing Inputs
  *       403:
  *         description: unauthorized
  *       500:
- *         description: Internal error
+ *         description: internal error
  */
 router.post("/changeLocation", authMiddleware, async (req, res) => {
     const {store_id, location} = req.body;

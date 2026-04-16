@@ -87,7 +87,8 @@ model item_type {
 model country {
   country_id      Int       @id @default(autoincrement())
   country_code    String    @db.VarChar @unique
-  name            String    @db.VarChar @unique
+  nameEN          String    @db.VarChar @unique
+  nameDE          String    @db.VarChar @unique
 
   items           item[]
   itemProducers   item_producer[]
