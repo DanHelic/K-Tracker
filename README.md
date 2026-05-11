@@ -1,4 +1,4 @@
-# Expense Tracker
+# K-Tracker / Expense Tracker
 
 A personal fullstack learning project for tracking purchases and visualizing spending statistics.
 
