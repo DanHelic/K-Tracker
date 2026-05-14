@@ -6,9 +6,11 @@ import type { Application } from "express";
 import swaggerUi from "swagger-ui-express";
 //import swaggerJsDoc from "swagger-jsdoc";
 const swaggerJsDoc = require("swagger-jsdoc"); //alt fix
-import argon2 from "argon2";
 
 const app: Application = express();
+import helmet from "helmet";
+
+app.use(helmet());
 app.use(express.json());
 
 import userRouter from "./user.js";

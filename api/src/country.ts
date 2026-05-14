@@ -207,3 +207,38 @@ router.put("/updateCountry", authMiddleware, async (req, res) => {
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 })
+
+
+//Delete-Endpoints
+/** 
+ * @swagger 
+ * /country/deleteCountry/{id}:
+ *  delete:
+ *    summary: Delete the country with the provided id
+ *    tags:
+ *      - country
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      201:
+ *        description: country deleted successfully
+ *      404:
+ *        description: country with provided id not found
+ *      500:
+ *        description: internal error
+*/
+router.delete("/deleteCountry/:id", authMiddleware, async (req, res) => {
+    // @ts-ignore
+    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
+
+    // @ts-ignore
+    const ret = await dbCountry.deleteCountry(parseInt(req.params.id));
+
+    if(ret.success) return res.status(201).json({message: "country deleted successfully"});
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+})

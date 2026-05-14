@@ -1,8 +1,8 @@
-let refreshTokens: string[] = [];
+let refreshTokens: string[] = []; //good for now, use redis later
 
 export function add(token: string) {
     refreshTokens.push(token);
-    console.log(refreshTokens);
+    //console.log(refreshTokens);
 }
 
 export function remove(token: string) {

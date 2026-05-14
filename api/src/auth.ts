@@ -1,10 +1,15 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import { REFRESH_SECRET } from "./session/tokens.js";
+import rateLimit from "express-rate-limit";
 //const swaggerJsDoc = require("swagger-jsdoc"); //alt fix
 
 const app = express();
 app.use(express.json());
+app.use("/auth/login", rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10
+}));
 
 const router = express.Router();
 export default router;
@@ -53,15 +58,14 @@ import * as tokenStore from "./session/tokenStore.js";
 router.post("/login", async (req, res) => {
     const ret = await checkPassword(req.body.user_name, req.body.password);
 
-    //create and return token
-    const accessToken = generateAccessToken(ret.id as number);
-    const refreshToken = generateRefreshToken(ret.id as number);
-
-    tokenStore.add(refreshToken);
-
-    res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
-
     if(ret.success){
+        //create and return token
+        const accessToken = generateAccessToken(ret.id as number);
+        const refreshToken = generateRefreshToken(ret.id as number);
+
+        tokenStore.add(refreshToken);
+
+        res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: "strict"});
         const updateLastLogin = await setLastLogin(req.body.user_name);
         if(updateLastLogin.success) return res.status(201).json({message: "login successful", accessToken: accessToken });
     }
@@ -97,7 +101,7 @@ router.post("/refresh", (req, res) => {
     try {
         const user = jwt.verify(token, REFRESH_SECRET);
         if (typeof user === "object" && user !== null && "userId" in user) {
-            const newAccessToken = generateAccessToken(user.userName);
+            const newAccessToken = generateAccessToken(user.userId);
             return res.json({ accessToken: newAccessToken });
         } else {
             return res.sendStatus(403);

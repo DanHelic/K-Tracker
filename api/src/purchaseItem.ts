@@ -284,7 +284,7 @@ router.get("/getPurchaseItemsByNameExact/:name", authMiddleware, async (req, res
  * @swagger 
  * /purchaseItem/getPurchaseItemByItemId/{itemId}:
  *  get:
- *    summary: Get the purchaseItems with the provided itemId as item_id (purchaseItems that have an item attached) of current user
+ *    summary: Get the purchaseItems with the provided itemId (purchaseItems that have an item attached) of current user
  *    tags:
  *      - purchaseItem
  *    parameters:

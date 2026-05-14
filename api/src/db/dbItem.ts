@@ -282,6 +282,21 @@ export async function updateItem(item_id_: number, name_: string, item_type_id_:
 }
 
 
+export async function deleteItem(item_id_: number) {
+  try{
+    const item = await prisma.item.delete({
+      where: {
+        item_id: item_id_
+      }
+    });
+    return {success: true, item: item}
+  }
+  catch (e) {
+    return {success: false, code: 500, message: "error while trying to delete item "+ e};
+  }
+}
+
+
 //help functions / without return to frontend
 export async function itemTypeIdExists(item_type_id_: number): Promise<boolean>{
   try{

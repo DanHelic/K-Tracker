@@ -25,9 +25,6 @@ import * as dbUser from './db/dbUser.js';
  *         user_name:
  *           type: string
  *           description: username
- *         password:
- *           type: string
- *           description: hashed password
  *         email:
  *           type: string
  *           description: email
@@ -205,7 +202,8 @@ router.post("/createUser", async (req, res) => {
  */
 router.patch("/updateUsername", authMiddleware, async (req, res) => {
     if (req.body.old_user_name==req.body.new_user_name) return res.status(400).json({message: "Old and New Username are the same"});
-    const pwCheck = await dbUser.checkPassword(req.body.old_user_name, req.body.password);
+    // @ts-ignore
+    const pwCheck = await dbUser.checkPasswordWithId(req.user.userId, req.body.password);
     if (!pwCheck.success) return res.status(401).json({message: "Password or username incorrect"});
     const uNameAvailable = await dbUser.userNameAvailable(req.body.new_user_name);
     if (!uNameAvailable) return res.status(409).json({message: "Username not available"});
@@ -231,13 +229,9 @@ router.patch("/updateUsername", authMiddleware, async (req, res) => {
  *           schema:
  *             type: object
  *             required:
- *               - user_name
  *               - old_password
  *               - new_password
  *             properties:
- *               user_name:
- *                 type: string
- *                 description: username
  *               old_password:
  *                 type: string
  *                 description: current password
@@ -256,10 +250,12 @@ router.patch("/updateUsername", authMiddleware, async (req, res) => {
  */
 router.patch("/updatePassword", authMiddleware, async (req, res) => {
     if (req.body.old_password==req.body.new_password) return res.status(400).json({message: "Old and New Password are the same"});
-    const pwCheck = await dbUser.checkPassword(req.body.user_name, req.body.old_password);
+    // @ts-ignore
+    const pwCheck = await dbUser.checkPasswordWithId(req.user.userId, req.body.password);
     if (!pwCheck.success) return res.status(401).json({message: "Username or password incorrect"});
 
-    const ret = await dbUser.updatePassword(req.body.user_name, req.body.old_password, req.body.new_password);
+    // @ts-ignore
+    const ret = await dbUser.updatePassword(req.user.userId, req.body.old_password, req.body.new_password);
 
     if(ret.success) return res.status(201).json({message: "Password update successful"});
     if(ret.code==null) return res.status(500).json({message: ret.message});
@@ -280,13 +276,9 @@ router.patch("/updatePassword", authMiddleware, async (req, res) => {
  *           schema:
  *             type: object
  *             required:
- *               - user_name
  *               - password
  *               - new_email
  *             properties:
- *               user_name:
- *                 type: string
- *                 description: username
  *               password:
  *                 type: string
  *                 description: current password
@@ -304,7 +296,8 @@ router.patch("/updatePassword", authMiddleware, async (req, res) => {
  *         description: internal error
  */
 router.patch("/updateEmail", authMiddleware, async (req, res) => {
-    const pwCheck = await dbUser.checkPassword(req.body.user_name, req.body.password);
+    // @ts-ignore
+    const pwCheck = await dbUser.checkPasswordWithId(req.user.userId, req.body.password);
     if (!pwCheck.success) return res.status(401).json({message: "Username or password incorrect"});
     const eAvailable = await dbUser.emailAvailable(req.body.new_email);
     if(!eAvailable) return res.status(409).json({message: "Email already in use"});

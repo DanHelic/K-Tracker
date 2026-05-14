@@ -321,15 +321,16 @@ export async function updatePurchaseItem(user_id_: number, purchase_item_id_: nu
 
 export async function  deletePurchaseItem(user_id_: number, purchase_item_id_: number) {
   try{
-    const purchaseItemDb = await prisma.purchase_item.delete({
+    const purchaseItemDb = await prisma.purchase_item.deleteMany({
       where: {
         purchase_item_id: purchase_item_id_,
         purchase: {
           user_id: user_id_
         }
-        }
-      })
-    return { success: !!purchaseItemDb};
+      }
+    })
+    if(purchaseItemDb.count>=1) return { success: true};
+    else return { success: false, message: "purchase_item_id not found"}
   }
   catch(e) {
     return {success: false, code: 500, message: "error while trying to delete purchaseItems. "+ e};
@@ -338,7 +339,7 @@ export async function  deletePurchaseItem(user_id_: number, purchase_item_id_: n
 
 
 //help functions / extra functions without return to frontend
-export async function  deletePurchaseItemsOfPurchase(purchase_id_: number) {
+export async function deletePurchaseItemsOfPurchase(purchase_id_: number) {
   try{
     const purchaseItemDb = await prisma.purchase_item.deleteMany({
       where: {
@@ -350,5 +351,19 @@ export async function  deletePurchaseItemsOfPurchase(purchase_id_: number) {
   catch(e) {
     return {success: false, code: 500, message: "error while trying to delete purchaseItems. "+ e};
   }
-    
+}
+
+
+export async function itemIdInUse(item_id_: number) {
+  try{
+    const purchaseItemDb = await prisma.purchase_item.findFirst({
+      where: {
+        item_id: item_id_
+      }
+    });
+    return !!purchaseItemDb;
+  }
+  catch(e) {
+    return {success: false, code: 500, message: "error while trying to get purchaseItem. "+ e};
+  }
 }

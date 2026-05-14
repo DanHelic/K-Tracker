@@ -156,3 +156,19 @@ export async function updateCountry(country_id_: number, country_code_: string, 
     return {success: false, code: 500, message: "error while trying to update country "+ e};
   }
 }
+
+
+export async function  deleteCountry(country_id_: number) {
+  try{
+    const purchaseItemDb = await prisma.country.delete({
+      where: {
+        country_id: country_id_
+      }
+    })
+    if(purchaseItemDb) return { success: true};
+    else return { success: false, message: "country_id not found"}
+  }
+  catch(e) {
+    return {success: false, code: 500, message: "error while trying to delete country. "+ e};
+  }
+}

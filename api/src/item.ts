@@ -9,6 +9,7 @@ export default router;
 
 import * as dbItem from './db/dbItem.js';
 import { userIsAdmin } from "./db/dbUser.js";
+import { getPurchaseItemByItemId } from "./db/dbPurchaseItem.js";
 
 /**
  * @swagger
@@ -465,3 +466,44 @@ router.put("/updateItem", authMiddleware, async (req, res) => {
 
 
 //Patch-Endpoints
+
+
+
+
+//Delete-Endpoints
+/** 
+ * @swagger 
+ * /item/deleteItem/{id}:
+ *  delete:
+ *    summary: Delete the item with the provided id if no purchaseItem uses it
+ *    tags:
+ *      - item
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      201:
+ *        description: item deleted successfully
+ *      409:
+ *        description: item is in use by a purchaseItem and can therefore not be deleted
+ *      500:
+ *        description: internal error
+*/
+router.delete("/deleteCountry/:id", authMiddleware, async (req, res) => {
+    // @ts-ignore
+    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
+
+    // @ts-ignore
+    const itemIsInUse = await getPurchaseItemByItemId(parseInt(req.params.id))
+    if(itemIsInUse) return res.status(409).json({message: "item is in use by a purchaseItem and can therefore not be deleted"});
+    
+    // @ts-ignore
+    const ret = await dbItem.deleteItem(parseInt(req.params.id));
+
+    if(ret.success) return res.status(201).json({message: "item deleted successfully"});
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+})

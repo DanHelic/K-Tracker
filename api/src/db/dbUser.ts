@@ -104,6 +104,35 @@ export async function checkPassword(user_name_: string, password_: string){
 }
 
 
+export async function checkPasswordWithId(user_id_: number, password_: string){
+  try{
+    const user = await prisma.user.findFirst({
+      select: {
+        password: true, 
+        user_id: true
+      },
+      where: {
+        user_id: user_id_
+      }
+    });
+
+    if(user==null){
+      return {success: false, code: 401, message: "Password or username incorrect"};
+    }
+
+    if(await argon2.verify(user.password, password_)){
+      return {success: true, id: user.user_id, message: "Login successful"};
+    }
+    else{
+      return {success: false, code: 401, message: "Password or username incorrect"};
+    }
+  }
+  catch (e) {
+    return {success: false, code: 500, message: "error while trying to login user. "+ e};
+  }
+}
+
+
 export async function updateUsername(old_user_name_: string, new_user_name_: string){
   try{
     const user = await prisma.user.update({
@@ -122,11 +151,11 @@ export async function updateUsername(old_user_name_: string, new_user_name_: str
 }
 
 
-export async function updatePassword(user_name_: string, old_password_: string, new_password_: string){
+export async function updatePassword(user_id_: number, old_password_: string, new_password_: string){
   try{
     const user = await prisma.user.update({
       where: {
-        user_name: user_name_
+        user_id: user_id_
       },
       data: {
         password: await argon2.hash(new_password_)
