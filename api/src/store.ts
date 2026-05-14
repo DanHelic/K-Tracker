@@ -204,9 +204,9 @@ router.post("/createStore", authMiddleware, async (req, res) => {
 //Patch-Endpoints
 /**
  * @swagger
- * /store/changeName:
+ * /store/updateName:
  *   post:
- *     summary: Change name of Store
+ *     summary: Update name of Store
  *     tags:
  *       - store
  *     requestBody:
@@ -227,7 +227,7 @@ router.post("/createStore", authMiddleware, async (req, res) => {
  *                 description: new storename
  *     responses:
  *       201:
- *         description: storename change successful
+ *         description: storename update successful
  *         content:
  *           application/json:
  *             schema:
@@ -239,7 +239,7 @@ router.post("/createStore", authMiddleware, async (req, res) => {
  *       500:
  *         description: internal error
  */
-router.post("/changeName", authMiddleware, async (req, res) => {
+router.post("/updateName", authMiddleware, async (req, res) => {
     const {store_id, name} = req.body;
 
     // @ts-ignore
@@ -247,9 +247,9 @@ router.post("/changeName", authMiddleware, async (req, res) => {
     if(!storeCheck.success) return res.status(storeCheck.code??400).json(storeCheck.message);
     
     // @ts-ignore
-    const ret = await dbStore.changeName(store_id, name, req.user.userId);
+    const ret = await dbStore.updateName(store_id, name, req.user.userId);
 
-    if(ret.success) return res.status(201).json({message: "storename change successful", store: ret.store});
+    if(ret.success) return res.status(201).json({message: "storename update successful", store: ret.store});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 })
@@ -257,9 +257,9 @@ router.post("/changeName", authMiddleware, async (req, res) => {
 
 /**
  * @swagger
- * /store/changeLocation:
+ * /store/updateLocation:
  *   post:
- *     summary: Change location of Store
+ *     summary: Update location of Store
  *     tags:
  *       - store
  *     requestBody:
@@ -280,7 +280,7 @@ router.post("/changeName", authMiddleware, async (req, res) => {
  *                 description: new storelocation
  *     responses:
  *       201:
- *         description: storelocation change successful
+ *         description: storelocation update successful
  *         content:
  *           application/json:
  *             schema:
@@ -292,7 +292,7 @@ router.post("/changeName", authMiddleware, async (req, res) => {
  *       500:
  *         description: internal error
  */
-router.post("/changeLocation", authMiddleware, async (req, res) => {
+router.post("/updateLocation", authMiddleware, async (req, res) => {
     const {store_id, location} = req.body;
 
     // @ts-ignore
@@ -300,9 +300,9 @@ router.post("/changeLocation", authMiddleware, async (req, res) => {
     if(!storeCheck.success) return res.status(storeCheck.code??400).json(storeCheck.message);
 
     // @ts-ignore
-    const ret = await dbStore.changeLocation(store_id, location, req.user.userId);
+    const ret = await dbStore.updateLocation(store_id, location, req.user.userId);
 
-    if(ret.success) return res.status(201).json({message: "storelocation change successful", store: ret.store});
+    if(ret.success) return res.status(201).json({message: "storelocation update successful", store: ret.store});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 })

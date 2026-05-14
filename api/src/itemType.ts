@@ -144,9 +144,9 @@ router.post("/createItemType", authMiddleware, async (req, res) => {
 //Patch-Endpoints
 /**
  * @swagger
- * /itemType/changeItemType:
+ * /itemType/updateItemType:
  *   patch:
- *     summary: Change of the itemtype
+ *     summary: Update of the itemtype
  *     tags: 
  *       - itemType
  *     requestBody:
@@ -167,7 +167,7 @@ router.post("/createItemType", authMiddleware, async (req, res) => {
  *                 description: itemtype name
  *     responses:
  *       201:
- *         description: itemtype change successful
+ *         description: itemtype update successful
  *       400: 
  *         description: input not found or invalid
  *       401: 
@@ -175,7 +175,7 @@ router.post("/createItemType", authMiddleware, async (req, res) => {
  *       500:
  *         description: internal error
  */
-router.patch("/changeItemType", authMiddleware, async (req, res) => {
+router.patch("/updateItemType", authMiddleware, async (req, res) => {
     // @ts-ignore
     if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
     const { item_type_id, item_type_name } = req.body;
@@ -185,9 +185,9 @@ router.patch("/changeItemType", authMiddleware, async (req, res) => {
 
     if (!(await dbItemType.getItemTypeById(parseInt(item_type_id))).success) return res.status(400).json({message: "itemtype not found"});
 
-    const ret = await dbItemType.changeItemType(item_type_id, item_type_name);
+    const ret = await dbItemType.updateItemType(item_type_id, item_type_name);
 
-    if(ret.success) return res.status(201).json({message: "itemtype change successful"});
+    if(ret.success) return res.status(201).json({message: "itemtype update successful"});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 })

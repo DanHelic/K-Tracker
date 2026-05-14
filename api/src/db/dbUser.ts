@@ -1,11 +1,3 @@
-/*import pool from './dbMain.js';
-
-export async function getUser(userName){
-  const ret = await pool.query('select * from users where username = $1', 
-    [userName]);
-  return ret;
-}*/
-
 import argon2 from "argon2";
 import prisma from "./dbMain.js";
 import {userT} from ".././types/userT.js";
@@ -112,7 +104,7 @@ export async function checkPassword(user_name_: string, password_: string){
 }
 
 
-export async function changeUsername(old_user_name_: string, new_user_name_: string){
+export async function updateUsername(old_user_name_: string, new_user_name_: string){
   try{
     const user = await prisma.user.update({
       where: {
@@ -122,7 +114,7 @@ export async function changeUsername(old_user_name_: string, new_user_name_: str
         user_name: new_user_name_
       }
     })
-    return {success: true, message: "Usernamechange successful"};
+    return {success: true, message: "Username update successful"};
   }
   catch(e){
     return {success: false, code: 500, message: "error while changing username. "+ e};
@@ -130,7 +122,7 @@ export async function changeUsername(old_user_name_: string, new_user_name_: str
 }
 
 
-export async function changePassword(user_name_: string, old_password_: string, new_password_: string){
+export async function updatePassword(user_name_: string, old_password_: string, new_password_: string){
   try{
     const user = await prisma.user.update({
       where: {
@@ -140,7 +132,7 @@ export async function changePassword(user_name_: string, old_password_: string, 
         password: await argon2.hash(new_password_)
       }
     })
-    return {success: true, message: "Password change successful"};
+    return {success: true, message: "Password update successful"};
   }
   catch(e){
     return {success: false, code: 500, message: "error while chaning password. "+ e};
@@ -148,7 +140,7 @@ export async function changePassword(user_name_: string, old_password_: string, 
 }
 
 
-export async function changeEmail(user_id_: number, old_email_: string, new_email_: string){
+export async function updateEmail(user_id_: number, old_email_: string, new_email_: string){
   try{
     const user = await prisma.user.update({
       where: {
@@ -159,7 +151,7 @@ export async function changeEmail(user_id_: number, old_email_: string, new_emai
         email: new_email_
       }
     })
-    return {success: true, message: "Email change successful"};
+    return {success: true, message: "Email update successful"};
   }
   catch(e){
     return {success: false, code: 500, message: "error while chaning email. "+ e};
@@ -167,7 +159,7 @@ export async function changeEmail(user_id_: number, old_email_: string, new_emai
 }
 
 
-export async function changeName(user_id_: number, first_name_: string, last_name_: string){
+export async function updateName(user_id_: number, first_name_: string, last_name_: string){
   try{
     const user = await prisma.user.update({
       where: {
@@ -178,7 +170,7 @@ export async function changeName(user_id_: number, first_name_: string, last_nam
         last_name: last_name_
       }
     })
-    return {success: true, message: "name change successful"};
+    return {success: true, message: "name update successful"};
   }
   catch(e){
     if((e as Error).message="An operation failed because it depends on one or more records that were required but not found. No record was found for an update."){

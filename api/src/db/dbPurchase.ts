@@ -1,6 +1,4 @@
 import prisma from "./dbMain.js";
-import {userT} from ".././types/userT.js";
-import { Prisma } from "./prisma/generated/client.js";
 
 
 export async function getPurchaseById(purchase_id_: number, user_id_: number) {
@@ -40,7 +38,7 @@ export async function getPurchaseById(purchase_id_: number, user_id_: number) {
       }
     });
 
-    if(purchaseDb == null) return {success: false, code: 400, message: "purchase not found"};
+    if(purchaseDb == null) return {success: false, code: 404, message: "purchase not found"};
     if(purchaseDb.user_id != user_id_) return {success: false, code: 403, message: "purchase belongs to different user"};
     return {success: true, purchase: purchaseDb};
   }
@@ -67,7 +65,7 @@ export async function getPurchaseByIdNoItems(purchase_id_: number, user_id_: num
       }
     });
 
-    if(purchaseDb == null) return {success: false, code: 400, message: "purchase not found"};
+    if(purchaseDb == null) return {success: false, code: 404, message: "purchase not found"};
     if(purchaseDb.user_id != user_id_) return {success: false, code: 403, message: "purchase belongs to different user"};
     return {success: true, purchase: purchaseDb};
   }
@@ -102,7 +100,7 @@ export async function getPurchasesOfUser(user_id_: number) {
 }
 
 
-export async function getPurchasesOfUserPaginated(user_id_: number, offset: number, limit: number, orderBy: string, order: string) {
+export async function getPurchasesOfUserPaginated(user_id_: number, offset_: number, limit_: number, orderBy_: string, order_: string) {
   try{
     const purchaseDb = await prisma.purchase.findMany({
       select: {
@@ -117,10 +115,10 @@ export async function getPurchasesOfUserPaginated(user_id_: number, offset: numb
       where: {
         user_id: user_id_
       },
-      skip: offset,
-      take: limit,
+      skip: offset_,
+      take: limit_,
       orderBy: {
-        [orderBy]: order
+        [orderBy_]: order_
       }
     });
 
@@ -153,8 +151,45 @@ export async function createPurchase(user_id_: number, purchased_at_: string, st
 }
 
 
+export async function updatePurchase(user_id_: number, purchase_id_: number, purchased_at_: string, store_id_: number, total_price_: number, item_count_: number, purchase_name_: string){
+    try{
+    const newPurchase = await prisma.purchase.update({
+      data: {
+        ...(purchased_at_ ? { purchased_at: new Date(purchased_at_) } : {}),
+        store_id: store_id_,
+        ...(total_price_ ? {total_price: total_price_} : {}),
+        ...(item_count_ ? {item_count: item_count_} : {}),
+        purchase_name: purchase_name_
+      },
+      where: {
+        purchase_id: purchase_id_,
+        user_id: user_id_
+      }
+    });
+
+    return {success: true, purchase: newPurchase};
+  }
+  catch (e) {
+    return {success: false, code: 500, message: "error while trying to update a purchase "+ e};
+  }
+}
 
 
+export async function deletePurchase(user_id_: number, purchase_id_: number){
+    try{
+    const newPurchase = await prisma.purchase.delete({
+      where: {
+        purchase_id: purchase_id_,
+        user_id: user_id_
+      }
+    });
+
+    return {success: true};
+  }
+  catch (e) {
+    return {success: false, code: 500, message: "error while trying to delete a purchase "+ e};
+  }
+}
 
 
 

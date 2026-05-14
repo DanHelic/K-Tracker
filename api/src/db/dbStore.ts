@@ -115,7 +115,7 @@ export async function createStore(name_: string, user_id_: number, location_: st
 
 
 
-export async function changeName(store_id_: number, name_: string, user_id_: number) {
+export async function updateName(store_id_: number, name_: string, user_id_: number) {
   try{
     const newStore = await prisma.store.update({
       data: {
@@ -130,12 +130,12 @@ export async function changeName(store_id_: number, name_: string, user_id_: num
     return {success: true, store: newStore};
   }
   catch (e) {
-    return {success: false, code: 500, message: "error while trying to change name. "+ e};
+    return {success: false, code: 500, message: "error while trying to update name. "+ e};
   }
 }
 
 
-export async function changeLocation(store_id_: number, location_: string, user_id_: number) {
+export async function updateLocation(store_id_: number, location_: string, user_id_: number) {
   try{
     const newStore = await prisma.store.update({
       data: {
@@ -150,6 +150,6 @@ export async function changeLocation(store_id_: number, location_: string, user_
     return {success: true, store: newStore};
   }
   catch (e) {
-    return {success: false, code: 500, message: "error while trying to change name. "+ e};
+    return {success: false, code: 500, message: "error while trying to update name. "+ e};
   }
 }

@@ -9,6 +9,7 @@ export default router;
 
 import {userIsAdmin} from './db/dbUser.js';
 import * as dbPurchase from './db/dbPurchase.js';
+import * as dbPurchaseItem from './db/dbPurchaseItem.js';
 
 /**
  * @swagger
@@ -17,7 +18,7 @@ import * as dbPurchase from './db/dbPurchase.js';
  *   description: Purchase related enpoints
  * components:
  *   schemas:
- *     user:
+ *     purchase:
  *       type: object
  *       properties:
  *         purchase_id:
@@ -60,10 +61,10 @@ import * as dbPurchase from './db/dbPurchase.js';
  *    responses:
  *      201:
  *        description: returns a purchase
- *      400:
- *        description: purchase with provided id not found
  *      403:
- *        description: purchase belongs to different user
+ *        description: purchase belongs to different user 
+ *      404:
+ *        description: purchase with provided id not found
  *      500:
  *        description: internal error
 */
@@ -93,10 +94,10 @@ router.get("/purchase/:id", authMiddleware, async (req, res) => {
  *    responses:
  *      201:
  *        description: returns a purchase without items
- *      400:
- *        description: purchase with provided id not found
  *      403:
  *        description: purchase belongs to different user
+ *      404:
+ *        description: purchase with provided id not found
  *      500:
  *        description: internal error
 */
@@ -190,7 +191,8 @@ router.get("/purchases", authMiddleware, async (req, res) => {
     if(page<1) page = 1;
 
     let limit = Number(req.query.limit) || 20;
-    if(limit<1 || limit > 50) limit = 20;
+    if(limit < 1) limit = 1;
+    if(limit > 50) limit = 50;
 
     const offset = (page-1) * limit;
 
@@ -199,7 +201,7 @@ router.get("/purchases", authMiddleware, async (req, res) => {
     if(possibleOrders.includes(req.query.orderBy as string)) orderBy = req.query.orderBy as string;
 
     let order = "desc"
-    if(req.query.order=="asc" || req.query.order=="desc") order = req.query.order;
+    if(req.query.order=="asc") order = "asc";
 
     // @ts-ignore
     const ret = await dbPurchase.getPurchasesOfUserPaginated(req.user.userId, offset, limit, orderBy, order);
@@ -261,14 +263,178 @@ router.post("/createPurchase", authMiddleware, async (req, res) => {
     // @ts-ignore
     const ret = await dbPurchase.createPurchase(req.user.userId, purchased_at, store_id, total_price, item_count, purchase_name);
 
-    if(ret.success) return res.status(201).json({message: "store created successful", store: ret.purchase});
+    if(ret.success) return res.status(201).json({message: "purchase created successful", purchase: ret.purchase});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 })
 
 
 //Put-Endpoints
+/**
+ * @swagger
+ * /purchase/updatePurchase:
+ *   put:
+ *     summary: updates a purchase
+ *     tags:
+ *       - purchase
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: 
+ *               - purchase_id
+ *             properties:
+ *               purchase_id:
+ *                 type: number
+ *                 description: id of the purchase to update
+ *               purchased_at:
+ *                 type: string
+ *                 description: date of purchase
+ *               store_id:
+ *                 type: number
+ *                 description: store id
+ *               total_price:
+ *                 type: number
+ *                 description: total price of purchase
+ *               item_count:
+ *                 type: number
+ *                 description: total number of items
+ *               purchase_name:
+ *                 type: string
+ *                 description: descriptiv name of purchase
+ *     responses:
+ *       201:
+ *         description: purchase updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/purchase'
+ *       400:
+ *         description: missing Inputs
+ *       403:
+ *         description: unauthorized
+ *       500:
+ *         description: internal error
+ */
+router.put("/updatePurchase", authMiddleware, async (req, res) => {
+    const {purchase_id, purchased_at, store_id, total_price, item_count, purchase_name} = req.body;
 
+    // @ts-ignore
+    const purchase = await dbPurchase.getPurchaseByIdNoItems(parseInt(purchase_id), req.user.userId);
+    if(!purchase.success){
+        return res.status(purchase.code ?? 400).json({message: purchase.message ?? "purchase id not found or belongs to different user"});
+    }
+
+    // @ts-ignore
+    const ret = await dbPurchase.updatePurchase(req.user.userId, purchase_id, purchased_at, store_id, total_price, item_count, purchase_name);
+
+    if(ret.success) return res.status(201).json({message: "purchase updated successful", purchase: ret.purchase});
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+})
 
 
 //Patch-Endpoints
+
+
+
+//Delete-Endpoints
+/**
+ * @swagger
+ * /purchase/deletePurchase:
+ *   delete:
+ *     summary: deletes a purchase and the linked purchaseItems
+ *     tags:
+ *       - purchase
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: 
+ *               - purchase_id
+ *             properties:
+ *               purchase_id:
+ *                 type: number
+ *                 description: id of the purchase to delete
+ *     responses:
+ *       201:
+ *         description: purchase deleted successfully
+ *       400:
+ *         description: missing Inputs
+ *       403:
+ *         description: unauthorized
+ *       500:
+ *         description: internal error
+ */
+router.delete("/deletePurchase", authMiddleware, async (req, res) => {
+    const {purchase_id} = req.body;
+
+    // @ts-ignore
+    const purchase = await dbPurchase.getPurchaseByIdNoItems(parseInt(purchase_id), req.user.userId);
+    if(!purchase.success){
+        return res.status(purchase.code ?? 400).json({message: purchase.message ?? "purchase id not found or belongs to different user"});
+    }
+
+    // @ts-ignore
+    const retPurchaseItems = await dbPurchaseItem.deletePurchaseItemsOfPurchase(purchase_id);
+    // @ts-ignore
+    const retPurchase = await dbPurchase.deletePurchase(req.user.userId, purchase_id);
+
+    if(retPurchase.success && retPurchaseItems.deleted != null) return res.status(201).json({message: "purchase and "+ retPurchaseItems.deleted + " linked purchaseItems deleted successfully"});
+    if(retPurchase.code==null) return res.status(500).json({message: retPurchase.message});
+    return res.status(retPurchase.code).json({message: retPurchase.message});
+})
+
+
+/**
+ * @swagger
+ * /purchase/deletePurchaseWithoutItems:
+ *   delete:
+ *     summary: (currently not working on purpose due to db design) deletes a purchase without the linked purchaseItems
+ *     tags:
+ *       - purchase
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: 
+ *               - purchase_id
+ *             properties:
+ *               purchase_id:
+ *                 type: number
+ *                 description: id of the purchase to delete
+ *     responses:
+ *       201:
+ *         description: purchase deleted successfully
+ *       400:
+ *         description: missing Inputs
+ *       403:
+ *         description: unauthorized
+ *       500:
+ *         description: internal error
+ */
+router.delete("/deletePurchaseWithoutItems", authMiddleware, async (req, res) => {
+    // @ts-ignore
+    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
+
+    const {purchase_id} = req.body;
+
+    // @ts-ignore
+    const purchase = await dbPurchase.getPurchaseByIdNoItems(parseInt(purchase_id), req.user.userId);
+    if(!purchase.success){
+        return res.status(purchase.code ?? 400).json({message: purchase.message ?? "purchase id not found or belongs to different user"});
+    }
+
+    // @ts-ignore
+    const retPurchase = await dbPurchase.deletePurchase(req.user.userId, purchase_id);
+
+    if(retPurchase.success) { return res.status(201).json({message: "purchase deleted successfully"}); }
+    if(retPurchase.code==null) return res.status(500).json({message: retPurchase.message});
+    return res.status(retPurchase.code).json({message: retPurchase.message});
+})

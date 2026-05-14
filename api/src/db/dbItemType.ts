@@ -97,7 +97,7 @@ export async function createItemType(item_type_name_: string) {
 }
 
 
-export async function changeItemType(item_type_id_: number, item_type_name_: string) {
+export async function updateItemType(item_type_id_: number, item_type_name_: string) {
   try{
     const newItemType = await prisma.item_type.update({
       data: {
@@ -111,6 +111,6 @@ export async function changeItemType(item_type_id_: number, item_type_name_: str
     return {success: true, itemtype: newItemType};
   }
   catch (e) {
-    return {success: false, code: 500, message: "error while trying to change an existing itemtype "+ e};
+    return {success: false, code: 500, message: "error while trying to update an existing itemtype "+ e};
   }
 }

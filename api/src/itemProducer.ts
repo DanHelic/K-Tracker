@@ -173,9 +173,9 @@ router.post("/createItemProducer", authMiddleware, async (req, res) => {
 //Put-Endpoints
 /**
  * @swagger
- * /itemProducer/changeItemProducer:
+ * /itemProducer/updateItemProducer:
  *   put:
- *     summary: Change of the itemProducer
+ *     summary: Update of the itemProducer
  *     tags: 
  *       - itemProducer
  *     requestBody:
@@ -199,7 +199,7 @@ router.post("/createItemProducer", authMiddleware, async (req, res) => {
  *                 description: country id
  *     responses:
  *       201:
- *         description: itemproducer change successful
+ *         description: itemproducer update successful
  *       400: 
  *         description: input not found or invalid
  *       401: 
@@ -207,7 +207,7 @@ router.post("/createItemProducer", authMiddleware, async (req, res) => {
  *       500:
  *         description: internal error
  */
-router.put("/changeItemProducer", authMiddleware, async (req, res) => {
+router.put("/updateItemProducer", authMiddleware, async (req, res) => {
     // @ts-ignore
     if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
     const { item_producer_id, item_producer_name, country_id } = req.body;
@@ -216,9 +216,9 @@ router.put("/changeItemProducer", authMiddleware, async (req, res) => {
     if (country_id < 1 || (country_id && !(await getCountryById(parseInt(country_id))).success)) return res.status(400).json({ message: "country id not found" });
 
     console.log((await getCountryById(parseInt(country_id))).success);
-    const ret = await dbItemProducer.changeItemProducer(parseInt(item_producer_id), item_producer_name, parseInt(country_id));
+    const ret = await dbItemProducer.updateItemProducer(parseInt(item_producer_id), item_producer_name, parseInt(country_id));
 
-    if(ret.success) return res.status(201).json({message: "itemProducer change successful"});
+    if(ret.success) return res.status(201).json({message: "itemProducer update successful"});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 })

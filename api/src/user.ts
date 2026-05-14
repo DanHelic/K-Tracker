@@ -166,9 +166,9 @@ router.post("/createUser", async (req, res) => {
 //Patch-Endpoints
 /**
  * @swagger
- * /user/changeUsername:
+ * /user/updateUsername:
  *   patch:
- *     summary: Change of the username
+ *     summary: Update of the username
  *     tags: 
  *       - user
  *     requestBody:
@@ -193,7 +193,7 @@ router.post("/createUser", async (req, res) => {
  *                 description: password
  *     responses:
  *       201:
- *         description: username change successful
+ *         description: username update successful
  *       400: 
  *         description: old and New Username are the same
  *       401: 
@@ -203,16 +203,16 @@ router.post("/createUser", async (req, res) => {
  *       500:
  *         description: internal error
  */
-router.patch("/changeUsername", authMiddleware, async (req, res) => {
+router.patch("/updateUsername", authMiddleware, async (req, res) => {
     if (req.body.old_user_name==req.body.new_user_name) return res.status(400).json({message: "Old and New Username are the same"});
     const pwCheck = await dbUser.checkPassword(req.body.old_user_name, req.body.password);
     if (!pwCheck.success) return res.status(401).json({message: "Password or username incorrect"});
     const uNameAvailable = await dbUser.userNameAvailable(req.body.new_user_name);
     if (!uNameAvailable) return res.status(409).json({message: "Username not available"});
 
-    const ret = await dbUser.changeUsername(req.body.old_user_name, req.body.new_user_name);
+    const ret = await dbUser.updateUsername(req.body.old_user_name, req.body.new_user_name);
 
-    if(ret.success) return res.status(201).json({message: "Username change successful"});
+    if(ret.success) return res.status(201).json({message: "Username update successful"});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 })
@@ -220,9 +220,9 @@ router.patch("/changeUsername", authMiddleware, async (req, res) => {
 
 /**
  * @swagger
- * /user/changePassword:
+ * /user/updatePassword:
  *   patch:
- *     summary: Change of the password
+ *     summary: Update of the password
  *     tags: [user]
  *     requestBody:
  *       required: true
@@ -246,7 +246,7 @@ router.patch("/changeUsername", authMiddleware, async (req, res) => {
  *                 description: new password
  *     responses:
  *       201:
- *         description: password change successful
+ *         description: password update successful
  *       400: 
  *         description: old and New Password are the same
  *       401: 
@@ -254,14 +254,14 @@ router.patch("/changeUsername", authMiddleware, async (req, res) => {
  *       500:
  *         description: internal error
  */
-router.patch("/changePassword", authMiddleware, async (req, res) => {
+router.patch("/updatePassword", authMiddleware, async (req, res) => {
     if (req.body.old_password==req.body.new_password) return res.status(400).json({message: "Old and New Password are the same"});
     const pwCheck = await dbUser.checkPassword(req.body.user_name, req.body.old_password);
     if (!pwCheck.success) return res.status(401).json({message: "Username or password incorrect"});
 
-    const ret = await dbUser.changePassword(req.body.user_name, req.body.old_password, req.body.new_password);
+    const ret = await dbUser.updatePassword(req.body.user_name, req.body.old_password, req.body.new_password);
 
-    if(ret.success) return res.status(201).json({message: "Password change successful"});
+    if(ret.success) return res.status(201).json({message: "Password update successful"});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 })
@@ -269,9 +269,9 @@ router.patch("/changePassword", authMiddleware, async (req, res) => {
 
 /**
  * @swagger
- * /user/changeEmail:
+ * /user/updateEmail:
  *   patch:
- *     summary: Change of the email
+ *     summary: Update of the email
  *     tags: [user]
  *     requestBody:
  *       required: true
@@ -295,7 +295,7 @@ router.patch("/changePassword", authMiddleware, async (req, res) => {
  *                 description: new email
  *     responses:
  *       201:
- *         description: email change successful
+ *         description: email update successful
  *       401: 
  *         description: username or password incorrect
  *       409: 
@@ -303,16 +303,16 @@ router.patch("/changePassword", authMiddleware, async (req, res) => {
  *       500:
  *         description: internal error
  */
-router.patch("/changeEmail", authMiddleware, async (req, res) => {
+router.patch("/updateEmail", authMiddleware, async (req, res) => {
     const pwCheck = await dbUser.checkPassword(req.body.user_name, req.body.password);
     if (!pwCheck.success) return res.status(401).json({message: "Username or password incorrect"});
     const eAvailable = await dbUser.emailAvailable(req.body.new_email);
     if(!eAvailable) return res.status(409).json({message: "Email already in use"});
 
     // @ts-ignore
-    const ret = await changeEmail(req.user.userId, req.body.old_email, req.body.new_email);
+    const ret = await updateEmail(req.user.userId, req.body.old_email, req.body.new_email);
 
-    if(ret.success) return res.status(201).json({message: "Email change successful"});
+    if(ret.success) return res.status(201).json({message: "Email update successful"});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 })
@@ -320,9 +320,9 @@ router.patch("/changeEmail", authMiddleware, async (req, res) => {
 
 /**
  * @swagger
- * /user/changeName:
+ * /user/updateName:
  *   patch:
- *     summary: Change of the first_name and last_name
+ *     summary: Update of the first_name and last_name
  *     tags: [user]
  *     requestBody:
  *       required: true
@@ -342,17 +342,17 @@ router.patch("/changeEmail", authMiddleware, async (req, res) => {
  *                 description: new last name
  *     responses:
  *       201:
- *         description: name change successful
+ *         description: name update successful
  *       401: 
  *         description: username not found
  *       500:
  *         description: internal error
  */
-router.patch("/changeName", authMiddleware, async (req, res) => {
+router.patch("/updateName", authMiddleware, async (req, res) => {
     // @ts-ignore
-    const ret = await changeName(req.user.userId, req.body.first_name, req.body.last_name);
+    const ret = await updateName(req.user.userId, req.body.first_name, req.body.last_name);
 
-    if(ret.success) return res.status(201).json({message: "name change successful"});
+    if(ret.success) return res.status(201).json({message: "name update successful"});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 })

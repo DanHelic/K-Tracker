@@ -68,7 +68,7 @@ export async function getItemByNameExact(item_name_: string) {
         created_at: true
       },
       where: {
-        name: item_name_
+        name: {equals: item_name_, mode: "insensitive"}
       }
     });
 
@@ -258,7 +258,7 @@ export async function createItem(name_: string, item_type_id_: number, country_i
 }
 
 
-export async function changeItem(item_id_: number, name_: string, item_type_id_: number, country_id_: number, value_: number, unit_: string, item_producer_id_: number) {
+export async function updateItem(item_id_: number, name_: string, item_type_id_: number, country_id_: number, value_: number, unit_: string, item_producer_id_: number) {
   try{
     const newItem = await prisma.item.update({
       data: {

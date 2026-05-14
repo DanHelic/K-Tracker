@@ -101,7 +101,7 @@ export async function createItemProducer(item_producer_name_: string, country_id
 }
 
 
-export async function changeItemProducer(item_producer_id_: number, item_producer_name_: string, country_id_: number) {
+export async function updateItemProducer(item_producer_id_: number, item_producer_name_: string, country_id_: number) {
   try{
     const newItemProducer = await prisma.item_producer.update({
       data: {
@@ -116,6 +116,6 @@ export async function changeItemProducer(item_producer_id_: number, item_produce
     return {success: true, itemtype: newItemProducer};
   }
   catch (e) {
-    return {success: false, code: 500, message: "error while trying to change an existing itemproducer "+ e};
+    return {success: false, code: 500, message: "error while trying to update an existing itemproducer "+ e};
   }
 }
