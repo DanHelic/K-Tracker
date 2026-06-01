@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "http://45.146.254.235",
+    "target": "https://purple-owl-21110.zap.cloud/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"

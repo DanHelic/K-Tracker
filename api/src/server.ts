@@ -9,9 +9,12 @@ const swaggerJsDoc = require("swagger-jsdoc"); //alt fix
 
 const app: Application = express();
 import helmet from "helmet";
+import cookieParser from 'cookie-parser';
 
 app.use(helmet());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 import userRouter from "./user.js";
 import authRouter from "./auth.js";

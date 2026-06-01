@@ -4,14 +4,19 @@ import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root',
 })
+
 export class MyGenApi {
 
   constructor(private http: HttpClient) {}
 
   getData(){
-    let ret = this.http.get('/api/user/users');
-    console.log(ret);
+    let ret = this.http.get('/api/hello');
+    //console.log(ret);
     return ret;
+  }
+
+  getUserName(){
+    return this.http.get('/api/user/user'); 
   }
 
 }

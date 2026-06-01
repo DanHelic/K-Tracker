@@ -1,8 +1,7 @@
 import {  Component, OnInit, ChangeDetectorRef} from '@angular/core';
-import { MyGenApi } from '../my-gen-api';
-import { HttpClient, httpResource } from '@angular/common/http';
+import { MyGenApi } from '../api/my-gen-api';
+import { HttpClient } from '@angular/common/http';
 import { AsyncPipe, JsonPipe } from '@angular/common';
-
 
 @Component({
   selector: 'app-home',
@@ -19,7 +18,6 @@ export class Home implements OnInit{
   ngOnInit(): void {
     this.api.getData().subscribe( res => {
       this.data = res;
-      console.log(res);
       this.cdr.detectChanges();
     });
   }

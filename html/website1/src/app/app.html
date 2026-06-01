@@ -4,8 +4,19 @@
       <img class="logo" src="assets/pictures/logo.png">
     </a>
     <a routerLink="/" routerLinkActive="active" class="links">Start</a>
-    <a routerLink="/seite2" routerLinkActive="active" class="links">Seite 2</a>
+    <a routerLink="/seite2" routerLinkActive="active" class="links" style="grid-area: link2;">Seite 2</a>
   </nav>
+
+  <form class="loginForm" id="loginForm" (ngSubmit)="login()">
+    <label for="inputUserName" class ="credentialLabel" style="grid-area: userNameLabel">Benutzername:</label>
+    <input class ="credentialText" [(ngModel)]="user_name" id="inputUserName" name="user_name">
+    <label for="inputPassword" class ="credentialLabel" style="grid-area: passwordLabel">Passwort:</label>
+    <input class ="credentialText" [(ngModel)]="password" id="inputPassword" name="password">
+    
+  </form>
+
+  <button type="submit" form="loginForm" class ="logIn" mat-raised-button color="primary">Anmelden</button>
+  <button class ="createAccountLogOut" mat-raised-button color="primary">Erstellen</button>
 </header>
 
 <router-outlet></router-outlet>

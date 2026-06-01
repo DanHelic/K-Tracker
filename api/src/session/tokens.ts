@@ -14,7 +14,7 @@ export interface UserPayload {
 }
 
 export function generateAccessToken(userId_: number): string {
-  return jwt.sign({ userId: userId_ }, ACCESS_SECRET, { expiresIn: "30m" });
+  return jwt.sign({ userId: userId_ }, ACCESS_SECRET, { expiresIn: "15m" });
 }
 
 export function generateRefreshToken(userId_: number): string {

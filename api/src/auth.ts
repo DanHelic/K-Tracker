@@ -2,21 +2,17 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import { REFRESH_SECRET } from "./session/tokens.js";
 import rateLimit from "express-rate-limit";
-//const swaggerJsDoc = require("swagger-jsdoc"); //alt fix
-
-const app = express();
-app.use(express.json());
-app.use("/auth/login", rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10
-}));
-
-const router = express.Router();
-export default router;
 import { checkPassword, setLastLogin } from './db/dbUser.js';
 import { generateAccessToken, generateRefreshToken } from "./session/tokens.js";
 import * as tokenStore from "./session/tokenStore.js";
+//const swaggerJsDoc = require("swagger-jsdoc"); //alt fix
 
+const app = express();
+
+const router = express.Router();
+export default router;
+
+const loginRateLimiter = rateLimit({ windowMs: 1 * 30 * 1000, limit: 6 })
 
 /**
  * @swagger
@@ -55,7 +51,7 @@ import * as tokenStore from "./session/tokenStore.js";
  *       500:
  *         description: internal error
  */
-router.post("/login", async (req, res) => {
+router.post("/login", loginRateLimiter, async (req, res) => {
     const ret = await checkPassword(req.body.user_name, req.body.password);
 
     if(ret.success){
@@ -65,7 +61,7 @@ router.post("/login", async (req, res) => {
 
         tokenStore.add(refreshToken);
 
-        res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: "strict"});
+        res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: false, sameSite: "strict"}); //change to secure true for production
         const updateLastLogin = await setLastLogin(req.body.user_name);
         if(updateLastLogin.success) return res.status(201).json({message: "login successful", accessToken: accessToken });
     }

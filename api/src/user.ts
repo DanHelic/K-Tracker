@@ -88,7 +88,7 @@ router.get("/users", authMiddleware, async (req, res) => {
 */
 router.get("/user", authMiddleware, async (req, res) => {
     // @ts-ignore
-    const ret = await getUserById(req.user.userId);
+    const ret = await dbUser.getUserById(req.user.userId);
 
     if(ret.success) return res.status(201).json(ret.user);
     if(ret.code==null) return res.status(500).json({message: ret.message});
@@ -251,8 +251,8 @@ router.patch("/updateUsername", authMiddleware, async (req, res) => {
 router.patch("/updatePassword", authMiddleware, async (req, res) => {
     if (req.body.old_password==req.body.new_password) return res.status(400).json({message: "Old and New Password are the same"});
     // @ts-ignore
-    const pwCheck = await dbUser.checkPasswordWithId(req.user.userId, req.body.password);
-    if (!pwCheck.success) return res.status(401).json({message: "Username or password incorrect"});
+    const pwCheck = await dbUser.checkPasswordWithId(req.user.userId, req.body.old_password);
+    if (!pwCheck.success) return res.status(401).json({message: pwCheck.message ?? "Username or password incorrect"});
 
     // @ts-ignore
     const ret = await dbUser.updatePassword(req.user.userId, req.body.old_password, req.body.new_password);

@@ -117,7 +117,7 @@ export async function checkPasswordWithId(user_id_: number, password_: string){
     });
 
     if(user==null){
-      return {success: false, code: 401, message: "Password or username incorrect"};
+      return {success: false, code: 401, message: "User not Found"};
     }
 
     if(await argon2.verify(user.password, password_)){
@@ -128,7 +128,7 @@ export async function checkPasswordWithId(user_id_: number, password_: string){
     }
   }
   catch (e) {
-    return {success: false, code: 500, message: "error while trying to login user. "+ e};
+    return {success: false, code: 500, message: "error while checking password of user. "+ e};
   }
 }
 

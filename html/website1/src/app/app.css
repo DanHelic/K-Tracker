@@ -1,19 +1,24 @@
 header{
-    height: 5vh;
+    height: 6vh;
+    display: grid;
+    background-color: #2d2dff;
+    grid-template-columns: calc(6vh * 829 / 304 + 35%) auto 35% 8% 8% 0.5%;
+    grid-template-areas: "logoAndLinks emptySpace1 loginForm logIn createAccountLogOut emptySpace2";
 }
 
 nav.topBar{
+    grid-area: logoAndLinks;
     height: 100%;
     display: grid;
     background-color: #2d2dff;
-    grid-template-columns: 10% repeat(5, 10%) auto 5%;
-    grid-template-areas: "logo" "link1" "link2" "link3" "link4" "link5" "logout";
+    grid-template-columns: calc(6vh * 829 / 304) repeat(4, calc((98% - (6vh * 829 / 304)) / 4)) auto;
+    grid-template-areas: "logo link1 link2 link3 link4 space";
 }
 
 img.logo{
     display: block;
     object-fit: contain;
-    height: 5vh;
+    height: 6vh;
 }
 
 a.links{
@@ -22,4 +27,41 @@ a.links{
     align-content: center;
     color:white;
     font-size: 2.2vh;
+}
+
+form.loginForm{
+    grid-area: loginForm;
+    display: flex;
+    margin-left: auto;
+}
+
+label.credentialLabel{
+    max-height: 100%;
+    text-align: center;
+    align-content: center;
+    color:white;
+    font-size: 1.7vh;
+    margin: 0px 3px 0px 15px;
+}
+
+input.credentialText{
+    height: 1.3em;
+    width: 9em;
+    align-self: center;
+}
+
+button.logIn{
+    grid-area: logIn;
+    align-self: center;
+    justify-self: center;
+    width: 80%;
+    height: 55%;
+}
+
+button.createAccountLogOut{
+    grid-area: createAccountLogOut;
+    align-self: center;
+    justify-self: center;
+    width: 80%;
+    height: 55%;
 }

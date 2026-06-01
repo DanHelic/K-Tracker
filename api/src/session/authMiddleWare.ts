@@ -20,9 +20,9 @@ export function authMiddleware(
       req.user = { userId: decoded.userId };
       next();
     } else {
-      res.sendStatus(403);
+      res.sendStatus(401);
     }
   } catch {
-    res.sendStatus(403);
+    res.sendStatus(401);
   }
 }
