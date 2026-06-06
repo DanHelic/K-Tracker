@@ -1,16 +1,21 @@
 import { Routes } from '@angular/router';
-import { Home } from './home/home';
-import { Seite2 } from './seite2/seite2';
+import { Home } from './pages/home/home';
+import { Seite2 } from './pages/seite2/seite2';
 
 export const routes: Routes = [ 
     {
         path: '',
         loadComponent: () =>
-            import('./home/home').then(m => m.Home),
+            import('./pages/home/home').then(m => m.Home),
     },
     {
         path: 'seite2',
         loadComponent: () =>
-            import('./seite2/seite2').then(m => m.Seite2),
+            import('./pages/seite2/seite2').then(m => m.Seite2),
+    },
+        {
+        path: 'createAccount',
+        loadComponent: () =>
+            import('./pages/create-account/create-account').then(m => m.CreateAccount),
     },
 ];

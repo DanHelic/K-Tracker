@@ -59,7 +59,7 @@ export async function createUser(user_name_: string, password_: string, email_: 
     const newUser = await prisma.user.create({
       data: {
         user_name: user_name_,
-        email: email_,
+        email: email_ === "" ? null : email_,
         password: await argon2.hash(password_),
         first_name: first_name_,
         last_name: last_name_,
@@ -177,7 +177,7 @@ export async function updateEmail(user_id_: number, old_email_: string, new_emai
         email: old_email_
       },
       data: {
-        email: new_email_
+        email: new_email_ === "" ? null : new_email_,
       }
     })
     return {success: true, message: "Email update successful"};
@@ -210,13 +210,13 @@ export async function updateName(user_id_: number, first_name_: string, last_nam
 }
 
 
-
-//help functions / extra functions without return to frontend
 export async function userNameAvailable(user_name_: string): Promise<boolean>{
   try{
     const user = await prisma.user.findFirst({
-      select: {user_id: true},
-      where: {user_name: user_name_}
+      select: {user_name: true},
+      where: {
+        user_name: {equals: user_name_, mode: "insensitive"}
+      }
     });
     if(user == null){ return true;}
     return false;
@@ -227,6 +227,9 @@ export async function userNameAvailable(user_name_: string): Promise<boolean>{
   }
 }
 
+
+
+//help functions / extra functions without return to frontend
 
 export async function emailAvailable(email_: string): Promise<boolean>{
   try{

@@ -8,15 +8,16 @@
   </nav>
 
   <form class="loginForm" id="loginForm" (ngSubmit)="login()">
-    <label for="inputUserName" class ="credentialLabel" style="grid-area: userNameLabel">Benutzername:</label>
-    <input class ="credentialText" [(ngModel)]="user_name" id="inputUserName" name="user_name">
-    <label for="inputPassword" class ="credentialLabel" style="grid-area: passwordLabel">Passwort:</label>
-    <input class ="credentialText" [(ngModel)]="password" id="inputPassword" name="password">
+    <label for="userNameInput" class ="credentialLabel" style="grid-area: userNameLabel">Benutzername:</label>
+    <input class ="credentialText" [(ngModel)]="user_name" id="userNameInput" name="user_name" autocomplete="username">
+    <label for="passwordInput" class ="credentialLabel" style="grid-area: passwordLabel">Passwort:</label>
+    <input class ="credentialText" [(ngModel)]="password" id="passwordInput" name="password" type="password" autocomplete="current-password">
     
   </form>
 
-  <button type="submit" form="loginForm" class ="logIn" mat-raised-button color="primary">Anmelden</button>
-  <button class ="createAccountLogOut" mat-raised-button color="primary">Erstellen</button>
+  <button type="submit" form="loginForm" class ="login" mat-raised-button color="primary" id="loginButton" hidden>Anmelden</button>
+  <button class ="createAccount" mat-raised-button color="primary" id="createAccountButton" (click)="createAccount()" hidden>Erstellen</button>
+  <button class ="logout" mat-raised-button color="primary" id="logoutButton" (click)="logout()" hidden>Abmelden</button>
 </header>
 
 <router-outlet></router-outlet>

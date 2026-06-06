@@ -1,0 +1,24 @@
+<div class="register-container">
+  <div class="register-card">
+    <h2>Neues Konto erstellen</h2>
+
+    <form (submit)="createUser($event)">
+      <div style="display: flex; justify-content: space-between"> <label for="user_name">Benutzername</label> <label id="invalidUsername" class="validationError" hidden>Benutzername nicht verfügbar</label></div>
+      <input type="text" id="user_name" name="user_name" [(ngModel)]="user_name" placeholder="Benutzername" (input)="checkUsername()" required>
+
+      <div style="display: flex; justify-content: space-between"> <label for="password">Passwort</label> <label id="invalidPassword" class="validationError" hidden>Passwort nicht lang genug</label></div>
+      <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="Passwort" (input)="checkPassword()" required>
+
+      <div style="display: flex; justify-content: space-between"> <label for="email">E-Mail (optional)</label> <label id="invalidEmail" class="validationError" hidden>Email ungültig</label></div>
+      <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="beispiel@email.de" (input)="checkEmail()">
+
+      <label for="first_name">Vorname (optional)</label>
+      <input type="text" id="first_name" name="first_name" [(ngModel)]="first_name" placeholder="Vorname">
+
+      <label for="last_name">Nachname (optional)</label>
+      <input type="text" id="last_name" name="last_name" [(ngModel)]="last_name" placeholder="Nachname">
+
+      <button type="submit">Konto erstellen</button>
+    </form>
+  </div>
+</div>

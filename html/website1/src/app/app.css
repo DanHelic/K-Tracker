@@ -1,3 +1,7 @@
+* {
+  font-family: Arial, sans-serif;
+}
+
 header{
     height: 6vh;
     display: grid;
@@ -33,6 +37,7 @@ form.loginForm{
     grid-area: loginForm;
     display: flex;
     margin-left: auto;
+    display: none;
 }
 
 label.credentialLabel{
@@ -50,7 +55,7 @@ input.credentialText{
     align-self: center;
 }
 
-button.logIn{
+button.login{
     grid-area: logIn;
     align-self: center;
     justify-self: center;
@@ -58,10 +63,19 @@ button.logIn{
     height: 55%;
 }
 
-button.createAccountLogOut{
+button.createAccount{
     grid-area: createAccountLogOut;
     align-self: center;
     justify-self: center;
     width: 80%;
     height: 55%;
+}
+
+button.logout{
+    grid-area: createAccountLogOut;
+    align-self: center;
+    justify-self: center;
+    width: 80%;
+    height: 55%;
+    color: red;
 }

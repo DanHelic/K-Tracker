@@ -18,6 +18,12 @@ export class Auth{
     });
   }
 
+  logout(){
+    return this.http.post<{ accessToken: string }>('/api/auth/logout',{}, {
+      withCredentials: true
+    });
+  }
+
   refreshToken() {
     return this.http.post<{ accessToken: string }>(
       '/api/auth/refresh',

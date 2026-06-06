@@ -81,7 +81,7 @@ router.get("/users", authMiddleware, async (req, res) => {
  *    tags:
  *      - user
  *    responses:
- *      200:
+ *      201:
  *        description: returns the User with the specified id
  *      500:
  *        description: internal error
@@ -93,6 +93,33 @@ router.get("/user", authMiddleware, async (req, res) => {
     if(ret.success) return res.status(201).json(ret.user);
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
+});
+
+
+/** 
+ * @swagger 
+ * /user/usernameAvailable/{username}:
+ *  get:
+ *    summary: If the given Username is available
+ *    tags:
+ *      - user
+ *    parameters:
+ *      - name: username
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      201:
+ *        description: returns the true if username available and false otherwise
+ *      500:
+ *        description: internal error
+*/
+router.get("/usernameAvailable/:username", async (req, res) => {
+    // @ts-ignore
+    const ret = await dbUser.userNameAvailable(req.params.username);
+
+    return res.status(201).json({available: ret});
 });
 
 
@@ -150,7 +177,7 @@ router.post("/createUser", async (req, res) => {
     if ((password as string).length < 6) { return res.status(400).json({ message: "password has to have 6 or more characters" });}
     
     if (!await dbUser.userNameAvailable(user_name)) return res.status(400).json({ message: "username already taken" });
-    if (!await dbUser.emailAvailable(email)) return res.status(400).json({ message: "email already in use" });
+    if (email && !await dbUser.emailAvailable(email)) return res.status(400).json({ message: "email already in use" });
 
     const ret = await dbUser.createUser(user_name, password, email, first_name, last_name);
 

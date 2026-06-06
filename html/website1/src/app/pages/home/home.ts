@@ -1,5 +1,5 @@
 import {  Component, OnInit, ChangeDetectorRef} from '@angular/core';
-import { MyGenApi } from '../api/my-gen-api';
+import { MyGenApi } from '../../api/my-gen-api';
 import { HttpClient } from '@angular/common/http';
 import { AsyncPipe, JsonPipe } from '@angular/common';
 
