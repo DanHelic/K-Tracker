@@ -2,12 +2,15 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Auth } from '../../api/Auth'
 import { catchError, switchMap, throwError } from 'rxjs';
+import { SKIP_AUTH_REFRESH } from './auth-token';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const authService = inject(Auth);
 
   const token = localStorage.getItem('accessToken');
+
+  const skipRefresh = req.context.get(SKIP_AUTH_REFRESH);
 
   let authReq = req;
 
@@ -22,7 +25,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authReq).pipe(
     catchError(err => {
 
-      if (err.status === 401) {
+      if (err.status === 401 && !skipRefresh) {
 
         return authService.refreshToken().pipe(
           switchMap(res => {

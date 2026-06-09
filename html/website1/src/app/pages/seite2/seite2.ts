@@ -1,11 +1,10 @@
 import {  Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import { MyGenApi } from '../../api/my-gen-api';
 import { HttpClient } from '@angular/common/http';
-import { AsyncPipe, JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-seite2',
-  imports: [AsyncPipe, JsonPipe],
+  imports: [],
   templateUrl: './seite2.html',
   styleUrl: './seite2.css',
 })

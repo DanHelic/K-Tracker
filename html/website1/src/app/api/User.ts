@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Auth } from './Auth';
+import { SKIP_AUTH_REFRESH } from '../core/interceptors/auth-token';
 
 @Injectable({
   providedIn: 'root',
@@ -27,5 +28,14 @@ export class User {
 
   usernameAvailable(username: string){
     return this.http.get('/api/user/usernameAvailable/'+username); 
+  }
+
+  getUserName(noRetry: boolean = false){
+    if(noRetry){
+      return this.http.get('/api/user/user', {
+        context: new HttpContext().set(SKIP_AUTH_REFRESH, true)
+      });
+    }
+    return this.http.get('/api/user/user'); 
   }
 }

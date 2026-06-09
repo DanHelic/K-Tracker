@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 
-export class Auth{
+export class Auth {
 
   constructor(private http: HttpClient) {}
 

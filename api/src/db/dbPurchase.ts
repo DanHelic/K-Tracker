@@ -82,7 +82,7 @@ export async function getPurchasesOfUser(user_id_: number) {
         purchase_id: true,
         user_id: true,
         purchased_at: true,
-        store_id: true,
+        store: true,
         total_price: true,
         item_count: true,
         purchase_name: true
@@ -102,27 +102,73 @@ export async function getPurchasesOfUser(user_id_: number) {
 
 export async function getPurchasesOfUserPaginated(user_id_: number, offset_: number, limit_: number, orderBy_: string, order_: string) {
   try{
-    const purchaseDb = await prisma.purchase.findMany({
-      select: {
-        purchase_id: true,
-        user_id: true,
-        purchased_at: true,
-        store_id: true,
-        total_price: true,
-        item_count: true,
-        purchase_name: true
-      },
-      where: {
-        user_id: user_id_
-      },
-      skip: offset_,
-      take: limit_,
-      orderBy: {
-        [orderBy_]: order_
-      }
-    });
+    const [purchaseDb, totalCount] = await Promise.all([
+      prisma.purchase.findMany({
+        select: {
+          purchase_id: true,
+          user_id: true,
+          purchased_at: true,
+          store: true,
+          total_price: true,
+          item_count: true,
+          purchase_name: true
+        },
+        where: {
+          user_id: user_id_
+        },
+        skip: offset_,
+        take: limit_,
+        orderBy: {
+          [orderBy_]: order_
+        }
+      }),
+      prisma.purchase.count({
+        where: {
+          user_id: user_id_
+        },
+      })
+    ]);
 
-    return {success: true, purchases: purchaseDb};
+    return {success: true, purchases: purchaseDb, dataCount: totalCount};
+  }
+  catch (e) {
+    return {success: false, code: 500, message: "error while trying to get purchase. "+ e};
+  }
+}
+
+
+export async function getPurchasesOfUserPaginatedSearch(user_id_: number, offset_: number, limit_: number, orderBy_: string, order_: string, purchase_name_: string) {
+  try{
+    const [purchaseDb, totalCount] = await Promise.all([
+      prisma.purchase.findMany({
+        select: {
+          purchase_id: true,
+          user_id: true,
+          purchased_at: true,
+          store: true,
+          total_price: true,
+          item_count: true,
+          purchase_name: true
+        },
+        where: {
+          user_id: user_id_,
+          purchase_name: {contains: purchase_name_, mode: "insensitive"},
+        },
+        skip: offset_,
+        take: limit_,
+        orderBy: {
+          [orderBy_]: order_
+        }
+      }),
+      prisma.purchase.count({
+        where: {
+          user_id: user_id_,
+          purchase_name: {contains: purchase_name_, mode: "insensitive"},
+        },
+      })
+    ]);
+
+    return {success: true, purchases: purchaseDb, dataCount: totalCount};
   }
   catch (e) {
     return {success: false, code: 500, message: "error while trying to get purchase. "+ e};

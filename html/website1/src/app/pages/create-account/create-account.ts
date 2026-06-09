@@ -4,6 +4,7 @@ import { App } from '../../app';
 import { FormControl, Validators } from '@angular/forms'
 import { Subscription } from 'rxjs/internal/Subscription';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-account',
@@ -12,7 +13,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './create-account.css',
 })
 export class CreateAccount {
-  constructor(private user: User, private app: App) {}
+  constructor(private user: User, private app: App, private router: Router) {}
   
   user_name = '';
   password = '';
@@ -20,6 +21,20 @@ export class CreateAccount {
   first_name = '';
   last_name = '';
   awaitingUsername = false;
+
+  ngOnInit(): void {
+    try{
+      this.user.getUserName(true).subscribe( res => {
+      if(res){
+        console.log("user already logged in.");
+        this.router.navigate(['']);
+      }
+      });
+    }
+    catch{
+      
+    }
+  }
 
   createUser(event: SubmitEvent){
     let email = document.getElementById("email") as HTMLInputElement;

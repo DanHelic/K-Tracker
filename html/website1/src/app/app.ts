@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MyGenApi } from './api/my-gen-api';
 import { timeout } from 'rxjs';
+import { Globals } from './core/globalVariables';
 
 
 @Component({
@@ -16,7 +17,7 @@ import { timeout } from 'rxjs';
 export class App {
   protected readonly title = signal('website1!');
 
-  constructor(private api: MyGenApi, private auth: Auth, private http: HttpClient, private router: Router) {}
+  constructor(public globals: Globals, private api: MyGenApi, private auth: Auth, private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
     if(localStorage.getItem('accessToken')){
@@ -24,7 +25,7 @@ export class App {
         .pipe(timeout(300))
         .subscribe({
           next: (res) => {
-          this.hideLogin(true);
+            this.hideLogin(true);
           },
           error: () => {
             this.hideLogin(false);
@@ -39,14 +40,13 @@ export class App {
 
   user_name = '';
   password = '';
-  confirmedUserName = '';
 
   login() {
     this.auth.login(this.user_name, this.password).subscribe(res => {
       localStorage.setItem('accessToken', res.accessToken);
       this.router.navigate(['']);
       console.log("login sucessful");
-      this.confirmedUserName = this.user_name;
+      this.globals.confirmedUsername.set(this.user_name);
       this.hideLogin(true);
     });
   }
@@ -60,7 +60,7 @@ export class App {
       localStorage.removeItem('accessToken');
       this.router.navigate(['']);
       console.log("logout sucessful");
-      this.confirmedUserName = '';
+      this.globals.confirmedUsername.set('');
       this.hideLogin(false);
     })
   }

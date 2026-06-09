@@ -206,7 +206,79 @@ router.get("/purchases", authMiddleware, async (req, res) => {
     // @ts-ignore
     const ret = await dbPurchase.getPurchasesOfUserPaginated(req.user.userId, offset, limit, orderBy, order);
 
-    if(ret.success) return res.status(201).json(ret.purchases);
+    if(ret.success) return res.status(201).json({"data": ret.purchases, "dataCount": ret.dataCount});
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+});
+
+
+/** 
+ * @swagger 
+ * /purchase/purchasesSearch:
+ *  get:
+ *    summary: Get all purchases of current user paginated with the provided search as name
+ *    tags:
+ *      - purchase
+ *    parameters:
+ *      - name: page
+ *        in: query
+ *        description: page number
+ *        required: false
+ *        schema:
+ *          type: number
+ *      - name: limit
+ *        in: query
+ *        description: limit per page
+ *        required: false
+ *        schema:
+ *          type: number
+ *      - name: orderBy
+ *        in: query
+ *        description: order by row (purchase_name/purchased_at/store_id/total_price/item_count)
+ *        required: false
+ *        schema:
+ *          type: string
+ *      - name: order
+ *        in: query
+ *        description: order of query (asc or desc)
+ *        required: false
+ *        schema:
+ *          type: string
+ *      - name: purchase_name
+ *        in: query
+ *        description: part of the purchase_name
+ *        required: false
+ *        schema:
+ *          type: string
+ *    responses:
+ *      201:
+ *        description: returns paginated purchases of current user
+ *      403:
+ *        description: unauthorized
+ *      500:
+ *        description: internal error
+*/
+router.get("/purchasesSearch", authMiddleware, async (req, res) => {
+    let page = Number(req.query.page) || 1;
+    if(page<1) page = 1;
+
+    let limit = Number(req.query.limit) || 20;
+    if(limit < 1) limit = 1;
+    if(limit > 50) limit = 50;
+
+    const offset = (page-1) * limit;
+
+    let orderBy = "purchased_at";
+    const possibleOrders = ["purchase_name","purchased_at","store_id","total_price","item_count"];
+    if(possibleOrders.includes(req.query.orderBy as string)) orderBy = req.query.orderBy as string;
+
+    let order = "desc"
+    if(req.query.order=="asc") order = "asc";
+
+    // @ts-ignore
+    const ret = await dbPurchase.getPurchasesOfUserPaginatedSearch(req.user.userId, offset, limit, orderBy, order, req.query.purchase_name);
+
+    if(ret.success) return res.status(201).json({"data": ret.purchases, "dataCount": ret.dataCount});
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 });
@@ -259,6 +331,8 @@ router.get("/purchases", authMiddleware, async (req, res) => {
  */
 router.post("/createPurchase", authMiddleware, async (req, res) => {
     const {purchased_at, store_id, total_price, item_count, purchase_name} = req.body;
+
+    if((purchase_name as string).length<3) return res.status(400).json({message: "Name zu kurz oder nicht vorhanden"});
 
     // @ts-ignore
     const ret = await dbPurchase.createPurchase(req.user.userId, purchased_at, store_id, total_price, item_count, purchase_name);
