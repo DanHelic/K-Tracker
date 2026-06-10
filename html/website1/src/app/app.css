@@ -3,79 +3,81 @@
 }
 
 header{
-    height: 6vh;
-    display: grid;
-    background-color: #2d2dff;
-    grid-template-columns: calc(6vh * 829 / 304 + 35%) auto 35% 8% 8% 0.5%;
-    grid-template-areas: "logoAndLinks emptySpace1 loginForm logIn createAccountLogOut emptySpace2";
+  height: 60px;
+  display: grid;
+  background-color: #2d2dff;
+  grid-template-columns: calc(6vh * 829 / 304 + 35%) auto 35% 8% 8% 0.5%;
+  grid-template-areas: "logoAndLinks emptySpace1 loginForm logIn createAccountLogOut emptySpace2";
+  position: sticky;
+  top: 0;
 }
 
 nav.topBar{
-    grid-area: logoAndLinks;
-    height: 100%;
-    display: grid;
-    background-color: #2d2dff;
-    grid-template-columns: calc(6vh * 829 / 304) repeat(4, calc((98% - (6vh * 829 / 304)) / 4)) auto;
-    grid-template-areas: "logo link1 link2 link3 link4 space";
+  grid-area: logoAndLinks;
+  height: 100%;
+  display: grid;
+  background-color: #2d2dff;
+  grid-template-columns: calc(6vh * 829 / 304) repeat(4, calc((98% - (6vh * 829 / 304)) / 4)) auto;
+  grid-template-areas: "logo link1 link2 link3 link4 space";
 }
 
 img.logo{
-    display: block;
-    object-fit: contain;
-    height: 6vh;
+  display: block;
+  object-fit: contain;
+  height: 60px;
 }
 
 a.links{
-    max-height: 100%;
-    text-align: center;
-    align-content: center;
-    color:white;
-    font-size: 2.2vh;
+  max-height: 100%;
+  text-align: center;
+  align-content: center;
+  color:white;
+  font-size: 2.2vh;
 }
 
 form.loginForm{
-    grid-area: loginForm;
-    display: flex;
-    margin-left: auto;
-    display: none;
+  grid-area: loginForm;
+  display: flex;
+  margin-left: auto;
+  display: none;
 }
 
 label.credentialLabel{
-    max-height: 100%;
-    text-align: center;
-    align-content: center;
-    color:white;
-    font-size: 1.7vh;
-    margin: 0px 3px 0px 15px;
+  max-height: 100%;
+  text-align: center;
+  align-content: center;
+  color:white;
+  font-size: 1.7vh;
+  margin: 0px 3px 0px 15px;
 }
 
 input.credentialText{
-    height: 1.3em;
-    width: 9em;
-    align-self: center;
+  height: 1.3em;
+  width: 9em;
+  align-self: center;
 }
 
 button.login{
-    grid-area: logIn;
-    align-self: center;
-    justify-self: center;
-    width: 80%;
-    height: 55%;
+  grid-area: logIn;
+  align-self: center;
+  justify-self: center;
+  width: 80%;
+  height: 55%;
 }
 
 button.createAccount{
-    grid-area: createAccountLogOut;
-    align-self: center;
-    justify-self: center;
-    width: 80%;
-    height: 55%;
+  grid-area: createAccountLogOut;
+  align-self: center;
+  justify-self: center;
+  width: 80%;
+  height: 55%;
 }
 
 button.logout{
-    grid-area: createAccountLogOut;
-    align-self: center;
-    justify-self: center;
-    width: 80%;
-    height: 55%;
-    color: red;
+  grid-area: createAccountLogOut;
+  align-self: center;
+  justify-self: center;
+  width: 80%;
+  height: 55%;
+  color: red;
 }

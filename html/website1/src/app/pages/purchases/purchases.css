@@ -1,12 +1,29 @@
-table {
+.search-field {
   width: 100%;
+  position: sticky;
+  top: 60px; /* Navbar-Höhe */
+  z-index: 100;
+  background: white;
+  margin: 0;
+  /*margin-bottom: -1.25em; */
 }
 
-.mat-mdc-form-field {
-  font-size: 14px;
-  width: 100%;
+.mat-mdc-form-field-subscript-wrapper .mat-mdc-form-field-bottom-align{
+  display: none;
+  height: 0;
+}
+
+.mat-mdc-header-row {
+  position: sticky;
+  top: 116px;
+  z-index: 100;
 }
 
 td, th {
   width: 20%;
+}
+
+mat-paginator {
+  position: sticky;
+  bottom: 0;
 }
