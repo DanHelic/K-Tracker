@@ -24,7 +24,7 @@ export const routes: Routes = [
       import('./pages/purchases/purchases').then(m => m.Purchases),
   },
   {
-    path: 'purchase',
+    path: 'purchase/:mode',
     loadComponent: () =>
       import('./pages/purchase/purchase').then(m => m.Purchase),
   },
@@ -34,7 +34,7 @@ export const routes: Routes = [
       import('./pages/items/items').then(m => m.Items),
   },
   {
-    path: 'item',
+    path: 'item:mode',
     loadComponent: () =>
       import('./pages/item/item').then(m => m.Item),
   },

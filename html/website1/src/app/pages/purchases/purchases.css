@@ -1,26 +1,73 @@
-.search-field {
-  width: 100%;
+.table-search-pagination {
+  width: 80%;
+  justify-self: center;
+  height: calc(100% - 60px); /* 100% - header */
+}
+
+.search-add{
   position: sticky;
   top: 60px; /* Navbar-Höhe */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 4px;
+  background-color: var(--mat-sys-surface);
+  z-index: 200;
+}
+
+.search-field {
+  width: 50%;
   z-index: 100;
   background: white;
   margin: 0;
-  /*margin-bottom: -1.25em; */
+}
+
+button.add{
+  height: 48px;
+  align-self: center;
 }
 
 .mat-mdc-form-field-subscript-wrapper .mat-mdc-form-field-bottom-align{
   display: none;
-  height: 0;
 }
+
+.table-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: calc(100% - 64px); /* 100% - pagination */
+}
+
+table {
+  table-layout: fixed;
+}
+
+.mat-column-purchase_name { width: 35%; }
+.mat-column-total_price { width: 15%; }
+.mat-column-item_count { width: 15%; }
+.mat-column-purchased_at { width: 15%; }
+.mat-column-store { width: 20%; }
 
 .mat-mdc-header-row {
   position: sticky;
-  top: 116px;
+  top: 124px;
   z-index: 100;
+  transition: 75ms;
 }
 
-td, th {
-  width: 20%;
+.mat-mdc-header-cell:hover {
+  transition: 75ms;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.mat-mdc-row {
+  cursor: pointer;
+  transition: 75ms;
+}
+
+.mat-mdc-row:hover {
+  transition: 75ms;
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 mat-paginator {

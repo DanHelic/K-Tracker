@@ -4,7 +4,10 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { Purchase } from '../../api/Purchase';
+import { RouterLink } from '@angular/router';
 
 export interface IPurchase {
   purchase_id: number,
@@ -19,7 +22,7 @@ export interface IPurchase {
   selector: 'app-purchases',
   templateUrl: './purchases.html',
   styleUrl: './purchases.css',
-  imports: [MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule],
+  imports: [RouterLink, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule],
 })
 
 export class Purchases implements AfterViewInit {
@@ -32,24 +35,36 @@ export class Purchases implements AfterViewInit {
   constructor(private purchase: Purchase) {}
 
   totalItems = 0;
-  pageSize = 0;
+  pageSize = 15;
   pageIndex = 1;
+  orderBy = "purchased_at"
+  order = "desc"
+  searchTerm = '';
+  searchTimeout: any;
+  sortTimeout: any;
 
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-
     this.paginator.page.subscribe(e => {
       this.pageIndex = e.pageIndex+1;
       this.pageSize = e.pageSize;
-      this.loadPage(this.pageIndex, this.pageSize);
+      this.loadPage();
     });
 
-    this.loadPage(1, 5);
+    this.sort.sortChange.subscribe(e => {
+      this.orderBy = e.active;
+      this.order = e.direction;
+      clearTimeout(this.sortTimeout);
+      this.sortTimeout = setTimeout(() => {
+        this.loadPage();
+      }, 200);
+    });
+
+    this.loadPage();
   }
 
-  loadPage(page: number, size: number){
-    console.log(page + " hi " + size);
-    this.purchase.getPurchasesSearch(page, size, "", true, this.searchTerm).subscribe( res => {
+
+  loadPage(){
+    this.purchase.getPurchasesSearch(this.pageIndex, this.pageSize, this.orderBy, this.order, this.searchTerm).subscribe( res => {
       console.log(res);
 
       let pageData = ((res as any).data as IPurchase[]).map( p => ({
@@ -64,14 +79,12 @@ export class Purchases implements AfterViewInit {
     console.log(this.searchTerm);
   }
 
-  searchTimeout: any;
-  searchTerm = '';
 
   applySearch(event: Event) {
     this.searchTerm = (event.target as HTMLInputElement).value.trim().toLowerCase();
     clearTimeout(this.searchTimeout);
     this.searchTimeout = setTimeout(() => {
-      this.loadPage(this.pageIndex, this.pageSize);
+      this.loadPage();
     }, 400);
   }
 
