@@ -303,7 +303,7 @@ router.get("/searchItem/:search", async (req, res) => {
 */
 router.get("/allItems", authMiddleware, async (req, res) => {
     // @ts-ignore
-    if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
+    //if(!await userIsAdmin(req.user.userId)) return res.status(401).json({message: "unauthorized"});
     const ret = await dbItem.getAllItems();
 
     if(ret.success) return res.status(201).json(ret.items);

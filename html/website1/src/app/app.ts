@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MyGenApi } from './api/my-gen-api';
 import { timeout } from 'rxjs';
-import { Globals } from './core/globalVariables';
+import { Globals } from './core/globals';
 
 
 @Component({

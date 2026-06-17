@@ -26,6 +26,32 @@ export async function getPurchaseItemById(purchase_item_id_: number, user_id_: n
 }
 
 
+export async function getPurchaseItemsByPurchase(purchase_id_: number, user_id_: number) {
+  try{
+    const purchaseItemDb = await prisma.purchase_item.findMany({
+      select: {
+        purchase_item_id: true,
+        purchase: true,
+        item: true,
+        item_total_price: true,
+        amount: true,
+        item_name: true
+      },
+      where: {
+        purchase_id: purchase_id_
+      }
+    });
+
+    if(purchaseItemDb == null) return {success: false, code: 404, message: "purchaseItem not found"};
+    if(purchaseItemDb[0] != null && purchaseItemDb[0].purchase?.user_id != user_id_) return {success: false, code: 403, message: "purchaseItem belongs to different user"};
+    return {success: true, purchaseItem: purchaseItemDb};
+  }
+  catch (e) {
+    return {success: false, code: 500, message: "error while trying to get purchaseItem. "+ e};
+  }
+}
+
+
 export async function getPurchaseItemByIdRaw(purchase_item_id_: number, user_id_: number) {
   try{
     const purchaseItemDb = await prisma.purchase_item.findFirst({

@@ -8,15 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Purchase } from '../../api/Purchase';
 import { RouterLink } from '@angular/router';
-
-export interface IPurchase {
-  purchase_id: number,
-  purchase_name: string;
-  total_price: string;
-  item_count: string;
-  purchased_at: string;
-  store: string;
-}
+import IPurchase from '../../core/IPurchase';
 
 @Component({
   selector: 'app-purchases',

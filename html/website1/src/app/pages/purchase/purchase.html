@@ -1,2 +1,99 @@
-<p>purchase works!</p>
-<p>opening {{purchase}}</p>
+<div class="edit-table-pagination">
+  <div class="item-data">
+    <div class="item-info">
+
+      <mat-form-field class="input-field">
+        <mat-label>Gegenstände</mat-label>
+        <mat-select [(value)]="selectedItem" (selectionChange)="setItem($event.value)">
+          <mat-option [value]="null">-</mat-option>
+          @for (item of allItems; track item) {
+            <mat-option [value]="item">{{item.name}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="input-field">
+        <mat-label>Produzent</mat-label>
+        <input matInput #input readonly [value]='producerField ?? ""'>
+      </mat-form-field>
+
+      <mat-form-field class="input-field">
+        <mat-label>Menge</mat-label>
+        <input matInput #input readonly [value]='amountUnitField ?? ""'>
+      </mat-form-field>
+
+      <mat-form-field class="input-field">
+        <mat-label>Herkunftsland</mat-label>
+        <input matInput #input readonly [value]='countryField ?? ""'>
+      </mat-form-field>
+    </div>
+
+    <div class="item-info" style="padding-bottom: 0px;">
+      <mat-form-field class="input-field">
+        <mat-label>Eigener Gegenstandsname</mat-label>
+        <input matInput (input)="dN()" [value]='customItemName ?? ""' #input>
+      </mat-form-field>
+
+      <mat-form-field class="input-field">
+        <mat-label>Preis</mat-label>
+        <input matInput [value]='priceField ?? ""' #input>
+        <span matTextSuffix>€</span>
+      </mat-form-field>
+
+      <mat-form-field class="input-field">
+        <mat-label>Anzahl</mat-label>
+        <input matInput [value]='amountField ?? ""' #input>
+      </mat-form-field>
+
+      <mat-form-field class="input-field">
+        <mat-label>Preis pro Einheit</mat-label>
+        <input matInput [value]='pricePerUnitField ?? ""' #input>
+        <span matTextSuffix>€/Einheit</span>
+      </mat-form-field>
+    </div>
+    
+    <label style="padding-left: 5px;">(Gegenstand und Eigener Gegenstandsname kann nicht gleichzeit ausgewählt werden)</label>
+  
+  </div>
+
+  <div class="search">
+    <mat-form-field class="input-field">
+      <mat-label>Suchen</mat-label>
+      <input matInput (input)="applySearch($event)" #input>
+    </mat-form-field>
+  </div>
+
+  <div class="table-wrapper mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort [matSortDisableClear]="true">
+
+      <ng-container matColumnDef="item_name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let row"> {{row.item_name}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="item_total_price">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Preis </th>
+        <td mat-cell *matCellDef="let row"> {{row.item_total_price}}€ </td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Anzahl </th>
+        <td mat-cell *matCellDef="let row"> {{row.amount}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="price_per_amount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Preis/Einheit </th>
+        <td mat-cell *matCellDef="let row"> {{row.price_per_amount}}€ </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="setPurchaseItem(row)"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="5">Keine Daten für "{{input.value}}" gefunden</td>
+      </tr>
+    </table>
+
+    <mat-paginator [length]="totalItems" [pageSize]="pageSize" [pageSizeOptions]="[15, 25, 50, 100]" aria-label="Select page of users"></mat-paginator>
+  </div>
+</div>

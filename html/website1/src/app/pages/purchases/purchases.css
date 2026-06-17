@@ -1,4 +1,4 @@
-.table-search-pagination {
+.search-table-pagination {
   width: 80%;
   justify-self: center;
   height: calc(100% - 60px); /* 100% - header */

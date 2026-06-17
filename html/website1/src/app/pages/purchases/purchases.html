@@ -1,8 +1,8 @@
-<div class="table-search-pagination">
+<div class="search-table-pagination">
   <div class="search-add">
     <mat-form-field class="search-field">
       <mat-label>Suchen</mat-label>
-      <input matInput (input)="applySearch($event)" placeholder="Einkauf" #input>
+      <input matInput (input)="applySearch($event)" #input>
     </mat-form-field>
     <button matFab extended class="add" [routerLink]="['/purchase', 'new']">
       <mat-icon>add</mat-icon>

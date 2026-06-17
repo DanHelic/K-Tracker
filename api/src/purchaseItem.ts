@@ -78,6 +78,39 @@ router.get("/purchaseItem/:id", authMiddleware, async (req, res) => {
 
 /** 
  * @swagger 
+ * /purchaseItem/purchaseItemByPurchase/{id}:
+ *  get:
+ *    summary: Get the purchaseItems from the provided purchase
+ *    tags:
+ *      - purchaseItem
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: number
+ *    responses:
+ *      201:
+ *        description: returns purchaseItems
+ *      403:
+ *        description: purchase belongs to different user
+ *      404:
+ *        description: purchase with provided id not found
+ *      500:
+ *        description: internal error
+*/
+router.get("/purchaseItemByPurchase/:id", authMiddleware, async (req, res) => {
+    // @ts-ignore
+    const ret = await dbPurchaseItem.getPurchaseItemsByPurchase(parseInt(req.params.id), req.user.userId);
+
+    if(ret.success) return res.status(201).json(ret.purchaseItem);
+    if(ret.code==null) return res.status(500).json({message: ret.message});
+    return res.status(ret.code).json({message: ret.message});
+});
+
+
+/** 
+ * @swagger 
  * /purchaseItem/purchaseItemRaw/{id}:
  *  get:
  *    summary: Get the purchaseItem with the provided id without information of purchase and item
