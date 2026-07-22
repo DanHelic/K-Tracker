@@ -55,7 +55,7 @@ import * as dbUser from './db/dbUser.js';
  *    tags:
  *      - user
  *    responses:
- *      201:
+ *      200:
  *        description: returns all users
  *      401:
  *        description: unauthorized
@@ -67,7 +67,7 @@ router.get("/users", authMiddleware, async (req, res) => {
     if(!await dbUser.userIsAdmin(req.user.userId)) return res.status(401).json({message: "Unauthorized"});
     const ret = await dbUser.getAllUsers();
 
-    if(ret.success) return res.status(201).json(ret.users);
+    if(ret.success) return res.status(200).json(ret.users);
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 });
@@ -81,7 +81,7 @@ router.get("/users", authMiddleware, async (req, res) => {
  *    tags:
  *      - user
  *    responses:
- *      201:
+ *      200:
  *        description: returns the User with the specified id
  *      500:
  *        description: internal error
@@ -90,7 +90,7 @@ router.get("/user", authMiddleware, async (req, res) => {
     // @ts-ignore
     const ret = await dbUser.getUserById(req.user.userId);
 
-    if(ret.success) return res.status(201).json(ret.user);
+    if(ret.success) return res.status(200).json(ret.user);
     if(ret.code==null) return res.status(500).json({message: ret.message});
     return res.status(ret.code).json({message: ret.message});
 });
@@ -110,7 +110,7 @@ router.get("/user", authMiddleware, async (req, res) => {
  *        schema:
  *          type: string
  *    responses:
- *      201:
+ *      200:
  *        description: returns the true if username available and false otherwise
  *      500:
  *        description: internal error
@@ -119,7 +119,7 @@ router.get("/usernameAvailable/:username", async (req, res) => {
     // @ts-ignore
     const ret = await dbUser.userNameAvailable(req.params.username);
 
-    return res.status(201).json({available: ret});
+    return res.status(200).json({available: ret});
 });
 
 

@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://purple-owl-21110.zap.cloud/",
+    "target": "https://green-hawk-50680.zap.cloud/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"

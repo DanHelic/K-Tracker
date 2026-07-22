@@ -3,16 +3,16 @@
 //import "dotenv/config";
 import dotenv from "dotenv";
 import { defineConfig } from "prisma/config";
-dotenv.config({ path: "../../.env" }); //is being ignore because its in dbMain.ts
+//dotenv.config({ path: "../../../.env" }); //is being ignored because its in dbMain.ts
 //import { env } from "node:process";
 
 export default defineConfig({
-  schema: "prisma/schema.prisma",
+  schema: "src/db/prisma/schema.prisma",
   migrations: {
-    path: "prisma/migrations",
+    path: "src/db/prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"] as string,
-    shadowDatabaseUrl: process.env["SHADOW_DATABASE_URL"] as string, 
+    url: process.env.DATABASE_URL!,
+    shadowDatabaseUrl: process.env.SHADOW_DATABASE_URL!, 
   },
 });

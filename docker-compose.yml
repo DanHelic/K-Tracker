@@ -1,0 +1,111 @@
+services:
+
+  postgres:
+    image: postgres:18
+    container_name: postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+      
+      PRISMA_USER: ${PRISMA_USER}
+      PRISMA_PASSWORD: ${PRISMA_PASSWORD}
+      ADMIN_USER: ${ADMIN_USER}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      POSTGRES_DB_MAIN: ${POSTGRES_DB_MAIN}
+      POSTGRES_DB_SHADOW: ${POSTGRES_DB_SHADOW}
+
+    expose:
+      - "5432"
+
+    volumes:
+      - ../dbData:/var/lib/postgresql/data
+      - ./postgres-init/init.sh:/docker-entrypoint-initdb.d/00-init.sh
+      - ./postgres-init/init.sql.template:/docker-entrypoint-initdb.d/init.sql.template
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./api
+
+    container_name: kt-api
+
+    restart: unless-stopped
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+
+    expose:
+      - "3000"
+
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+
+    command: npx tsx watch src/server.ts
+
+  frontend:
+    build:
+      context: ./html
+      
+    restart: unless-stopped
+
+    container_name: kt-angular
+
+    depends_on:
+      - api
+      
+    working_dir: /app
+
+    ports:
+      - "4200:4200"
+
+    volumes:
+      - ./html/website1:/app
+      - /app/node_modules
+
+    command: npx ng serve --host 0.0.0.0 --port 4200 --poll 1000 --no-hmr
+    
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    
+  adminer:
+    image: adminer:latest
+    container_name: kt-adminer
+    restart: unless-stopped
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    expose:
+      - "8080"
+      
+  nginx:
+    image: nginx:latest
+    container_name: kt-nginx
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      - ../certbot:/var/www/certbot
+      - ./nginx:/etc/nginx/conf.d:ro
+      - ./html/website1/dist/website1/browser:/usr/share/nginx/html:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+
+    depends_on:
+      - api

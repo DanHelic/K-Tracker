@@ -11,7 +11,12 @@ const app: Application = express();
 import helmet from "helmet";
 import cookieParser from 'cookie-parser';
 
-app.use(helmet());
+//app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -58,7 +63,7 @@ app.use("/api/purchaseItem/", purchaseItemRouter);
  */
 app.get("/api/hello", (req, res) => {
   //console.log("Loaded DB URL:", process.env.DATABASE_URL);
-  res.json({ message: "Hello from API!!!2" });
+  res.json({ message: "Hello from API!!!12" });
 });
 
 
@@ -88,13 +93,13 @@ const options = {
       },
     ],
   },
-  apis: ["./*.js"], // Dateien mit Swagger Kommentaren
+  apis: ["./dist/**/*.js"], // Dateien mit Swagger Kommentaren
 };
 
 const specs = swaggerJsDoc(options);
 
 app.use("/api/swagger", swaggerUi.serve, swaggerUi.setup(specs));
 
-app.listen(3000, "127.0.0.1", () => {
+app.listen(3000, "0.0.0.0", () => {
   console.log("API running on port 3000");
 });
