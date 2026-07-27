@@ -273,6 +273,7 @@ export async function userIsAdmin(user_id_: number): Promise<boolean>{
       where: {user_id: user_id_}
     });
     if(user == null){ return false;}
+    if(!user.is_admin) console.log("user: "+user_id_+" tried accessing admin endpoint");
     return user.is_admin;
   }
   catch (e) {

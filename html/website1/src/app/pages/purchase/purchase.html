@@ -4,12 +4,17 @@
 
       <mat-form-field class="input-field">
         <mat-label>Gegenstände</mat-label>
-        <mat-select [(value)]="selectedItem" (selectionChange)="setItem($event.value)">
+        <input matInput [formControl]="itemControl" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayItem" (optionSelected)="setItem($event.option.value)">
           <mat-option [value]="null">-</mat-option>
-          @for (item of allItems; track item) {
-            <mat-option [value]="item">{{item.name}}</mat-option>
+          @for (group of sortedGroups; track group[0]) {
+            <mat-optgroup [label]="group[1][0].item_type?.item_type_name??''">
+              @for (item of group[1]; track item.item_id) {
+              <mat-option [value]="item">{{item.name}}</mat-option>
+              }
+            </mat-optgroup>
           }
-        </mat-select>
+        </mat-autocomplete>
       </mat-form-field>
 
       <mat-form-field class="input-field">

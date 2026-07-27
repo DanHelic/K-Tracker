@@ -46,5 +46,5 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "include": ["src/**/*.ts", "prisma.config.ts"]
+  "include": ["src/**/*.ts", "src/db/prisma/prisma.config.ts"]
 }

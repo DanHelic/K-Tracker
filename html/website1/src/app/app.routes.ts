@@ -24,7 +24,12 @@ export const routes: Routes = [
       import('./pages/purchases/purchases').then(m => m.Purchases),
   },
   {
-    path: 'purchase/:mode',
+    path: 'purchase',
+    loadComponent: () =>
+      import('./pages/purchase/purchase').then(m => m.Purchase),
+  },
+  {
+    path: 'purchase/:id',
     loadComponent: () =>
       import('./pages/purchase/purchase').then(m => m.Purchase),
   },

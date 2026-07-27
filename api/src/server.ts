@@ -11,6 +11,11 @@ const app: Application = express();
 import helmet from "helmet";
 import cookieParser from 'cookie-parser';
 
+import dotenv from 'dotenv';
+import dotenvExpand from 'dotenv-expand';
+const env = dotenv.config({ path: './.env' });
+dotenvExpand.expand(env);
+
 //app.use(helmet());
 app.use(
   helmet({
@@ -65,7 +70,6 @@ app.get("/api/hello", (req, res) => {
   //console.log("Loaded DB URL:", process.env.DATABASE_URL);
   res.json({ message: "Hello from API!!!12" });
 });
-
 
 const options = {
   definition: {
