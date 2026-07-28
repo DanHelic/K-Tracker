@@ -24,7 +24,7 @@ import IItem from '../../core/IItem';
 export class Purchase implements AfterViewInit, OnInit {
 
 
-  displayedColumns: string[] = ['item_name', 'item_total_price', 'amount', 'price_per_amount']; 
+  displayedColumns: string[] = ['item_name', 'item_total_price', 'amount', 'price_per_amount', 'delete']; 
   dataSource = new MatTableDataSource<IPurchaseItem>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -41,6 +41,7 @@ export class Purchase implements AfterViewInit, OnInit {
   searchTerm = '';
   searchTimeout: any;
   sortTimeout: any;
+  lastClickedDeleteIcon: any;
 
   allItems: IItem[] = [];
   pageData: any;
@@ -49,31 +50,33 @@ export class Purchase implements AfterViewInit, OnInit {
   itemGroups!: Map<number, IItem[]>;
   sortedGroups!: [number, IItem[]][];
 
-  selectedItem: any;
+  selectedItem: any; //item
   itemId: any;
   producerField: any;
   amountUnitField: any;
   countryField: any;
 
-  customItemName: any;
-  priceField: any;
-  amountField: any;
-  pricePerUnitField: any;
+  purchaseItemId: number | null = null; //purchaseItem
+  customItemName = new FormControl('');
+  priceField = new FormControl('');
+  amountField = new FormControl('');
+  pricePerUnitField = new FormControl('');
 
 
   ngOnInit(): void {
     this.purchaseId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadData();
+    this.itemGroups = new Map<number, IItem[]>();
     this.singlePurchase.getAllItems().subscribe( res => { //get all Standard-Items
       this.allItems = res as IItem[];
       this.filteredItems = this.allItems;
-      this.itemGroups = new Map<number, IItem[]>();
       this.doItemGroups();
       console.log(this.itemGroups);
     });
 
     this.itemControl.valueChanges.subscribe(value => { //filter of all Items in list for name, type, value, producer
-      const search = typeof value === 'string' ? value.toLowerCase() : '';
+      if (typeof value !== 'string') return;
+      const search = value.toLowerCase() ?? "";
       this.filteredItems = this.allItems.filter(item =>
         item.name.toLowerCase().includes(search) ||
         item.item_type?.item_type_name.toLowerCase().includes(search) ||
@@ -109,6 +112,12 @@ export class Purchase implements AfterViewInit, OnInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.sort.active = 'item_name';
+    this.sort.direction = 'asc';
+    this.sort.sortChange.emit({
+      active: this.sort.active,
+      direction: this.sort.direction
+    });
     this.dataSource.sortingDataAccessor = (data: any, sortHeaderId: string): string => {
       if (typeof data[sortHeaderId] === 'string') {
         return data[sortHeaderId].toLocaleLowerCase();
@@ -124,7 +133,8 @@ export class Purchase implements AfterViewInit, OnInit {
 
       this.pageData = (res as IPurchaseItem[]).map( p => ({
         ...p,
-        price_per_amount: p.item_total_price / (p.amount??1),
+        price_per_amount: Number((p.item_total_price / (p.amount??1)).toFixed(2)),
+        item_total_price: Number(p.item_total_price),
         item_name: p.item_name ?? p.item?.name
       }));
 
@@ -138,37 +148,86 @@ export class Purchase implements AfterViewInit, OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  setItem(event: IItem | null) {
+  setItem(event: IItem | null) { //sets the top row for the item
     if(!event) {
+      this.itemControl.setValue("");
       this.producerField = "";
       this.amountUnitField = "";
       this.countryField = ""; 
       this.itemId = "";
     }
     else {
+      if(typeof(this.itemControl.getRawValue())==="string") this.itemControl.setValue(event.name);
       this.producerField = event.item_producer?.item_producer_name ?? "";
       this.amountUnitField = event.value + " " + event.unit;
       this.countryField = event.country?.country_code ?? "";  
       this.itemId = event.item_id;  
+      this.customItemName.setValue('');
     }
+    this.selectedItem = this.allItems.find((item: IItem) => item.item_id === event?.item_id) ?? null;
+    this.filteredItems = this.allItems;
+    this.doItemGroups();
   }
 
-  setPurchaseItem(event: IPurchaseItem) {
+  setPurchaseItem(event: IPurchaseItem) { //called after clicking an item, sets all of the top fields
     this.setItem(event.item);
-    this.selectedItem = this.allItems.find((item: IItem) => item.item_id === event.item?.item_id) ?? null;
-
-    this.customItemName = event.item ? "" : event.item_name;
-    this.priceField = event.item_total_price;
-    this.amountField = event.amount;
-    this.pricePerUnitField = event.price_per_amount;
-    
+    //this.selectedItem = this.allItems.find((item: IItem) => item.item_id === event.item?.item_id) ?? null;
+     
+    this.customItemName.setValue(event.item ? "" : event.item_name);
+    this.priceField.setValue(String(event.item_total_price));
+    this.amountField.setValue(String(event.amount));
+    this.pricePerUnitField.setValue(String(event.price_per_amount));
+    this.purchaseItemId = event.purchase_item_id;
   }
   
   dN() {
-
+    this.setItem(null);
   }
 
   displayItem(item: any): string {
+    if(typeof(item)==="string") return item;
     return item?.name ?? '';
   }
+
+  saveOrCreate(){
+    if(!this.itemId && !this.customItemName.getRawValue()) return;
+    if(!this.purchaseItemId) {
+      console.log("creating item");
+      this.singlePurchase.createNewPurchaseItem(this.purchaseId, this.itemId, Number(this.priceField.getRawValue()), 
+        Number(this.amountField.getRawValue()), this.customItemName.getRawValue()).subscribe( res => {
+          this.reset();
+          this.loadData();
+        });
+    }
+    else {
+      console.log("updating item");
+      this.singlePurchase.updatePurchaseItem(this.purchaseItemId, this.purchaseId, this.itemId, Number(this.priceField.getRawValue()), 
+        Number(this.amountField.getRawValue()), this.customItemName.getRawValue()).subscribe( res => {
+          this.loadData();
+        });
+    }
+  }
+
+  reset(){
+    this.setItem(null);
+    this.customItemName.setValue(null);
+    this.priceField.setValue(null);
+    this.amountField.setValue(null);
+    this.pricePerUnitField.setValue(null);
+    this.purchaseItemId = null;
+  }
+
+  deletePurchaseItem(row: any){
+    if(!row.isMarked){
+      row.isMarked = true;
+      if(this.lastClickedDeleteIcon) this.lastClickedDeleteIcon.isMarked = false;
+      this.lastClickedDeleteIcon = row;
+    }
+    else {
+      this.singlePurchase.deletePurchaseItem(Number(row.purchase_item_id)).subscribe( res => {
+        this.loadData();
+      });
+    }
+  }
+
 }

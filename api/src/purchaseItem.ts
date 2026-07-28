@@ -405,7 +405,9 @@ router.post("/createPurchaseItem", authMiddleware, async (req, res) => {
     const purchase = await getPurchaseByIdNoItems(purchase_id, req.user.userId);
     if(!purchase.success) return res.status(purchase.code??400).json({message: purchase.message});
 
-    if(item_id && item_name) item_name = null;
+    if(item_id === "") item_id = null;
+    else item_id = Number(item_id);
+    if(item_id && (item_name || item_name==="")) item_name = null;
 
     // @ts-ignore
     const ret = await dbPurchaseItem.createPurchaseItem(purchase_id, item_id, item_total_price, amount, item_name);
@@ -478,8 +480,10 @@ router.put("/updatePurchaseItem", authMiddleware, async (req, res) => {
     const purchase = await getPurchaseByIdNoItems(purchase_id, req.user.userId);
     if(!purchase.success) return res.status(purchase.code??400).json({message: purchase.message});
 
-    if(item_id && item_name) item_name = null;
-
+    if(item_id === "") item_id = null;
+    else item_id = Number(item_id);
+    if(item_id && (item_name || item_name==="")) item_name = null;
+    
     // @ts-ignore
     const ret = await dbPurchaseItem.updatePurchaseItem(req.user.userId, purchase_item_id, purchase_id, item_id, item_total_price, amount, item_name);
 
