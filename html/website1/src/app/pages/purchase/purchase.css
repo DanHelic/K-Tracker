@@ -11,29 +11,18 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 10px 0px;
+  padding: 5px 0px;
   background-color: var(--mat-sys-surface);
   z-index: 200;
+  border-bottom: 1px solid;
 }
 
 .item-info {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding-bottom: 15px;
+  padding-bottom: 5px;
   background-color: var(--mat-sys-surface);
-}
-
-.searchAndButtons {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin-right: 20px;
-}
-
-.search {
-  width: calc(50% + 10px);
-
 }
 
 .input-field {
@@ -43,10 +32,29 @@
   padding: 5px;
 }
 
+.searchAndButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.search {
+  width: 50% /*calc(50% + 26px)*/;
+
+}
+
+.addResetButtons {
+  width: calc(50% - 20px);
+  padding: 0px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-self: center;
+}
+
 button.addReset{
   height: 48px;
   align-self: center;
-  width: 22%;
+  width: calc(50% - 8px);
   /*margin-left: 10px;
   /*flex-grow: 1;*/
 }
@@ -63,9 +71,19 @@ button.addReset{
   flex: 1;
 }
 
-mat-paginator {
+.paginator-wrapper {
+  border-top: 1px solid;
   position: sticky;
   bottom: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: var(--mat-sys-surface);  
+}
+
+.purchase-info {
+  align-self: center;
+  font-size: 16px;
 }
 
 table {
@@ -93,6 +111,7 @@ table {
 .mat-mdc-row {
   cursor: pointer;
   transition: 75ms;
+  height: 44px;
 }
 
 .mat-mdc-row:hover {

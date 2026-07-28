@@ -1,5 +1,5 @@
 import { ActivatedRoute } from '@angular/router';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -14,6 +14,8 @@ import { SinglePurchase } from '../../api/SinglePurchase';
 import { RouterLink } from '@angular/router';
 import IPurchaseItem from '../../core/IPurchaseItem';
 import IItem from '../../core/IItem';
+import IPurchase from '../../core/IPurchase';
+import IStore from '../../core/IStore';
 
 @Component({
   selector: 'app-purchase',
@@ -30,9 +32,12 @@ export class Purchase implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private singlePurchase: SinglePurchase, private route: ActivatedRoute) {}
+  constructor(private singlePurchase: SinglePurchase, private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
 
   purchaseId!: number;
+  purchaseDate: any;
+  purchaseStore: IStore | null = null;
+  purchaseName: any;
   totalItems = 0;
   pageSize = 15;
   pageIndex = 1;
@@ -67,11 +72,22 @@ export class Purchase implements AfterViewInit, OnInit {
     this.purchaseId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadData();
     this.itemGroups = new Map<number, IItem[]>();
+
+    this.singlePurchase.getPurchase(this.purchaseId).subscribe( res => {
+      console.log("purchase");
+      const purchase = res as IPurchase;
+      this.purchaseDate = new Date(purchase.purchased_at).toLocaleDateString();
+      this.purchaseStore = purchase.store;
+      this.purchaseName = purchase.purchase_name;
+      this.cdr.markForCheck();
+    });
+
     this.singlePurchase.getAllItems().subscribe( res => { //get all Standard-Items
       this.allItems = res as IItem[];
       this.filteredItems = this.allItems;
       this.doItemGroups();
       console.log(this.itemGroups);
+      this.cdr.markForCheck();
     });
 
     this.itemControl.valueChanges.subscribe(value => { //filter of all Items in list for name, type, value, producer
@@ -85,6 +101,17 @@ export class Purchase implements AfterViewInit, OnInit {
       );
       this.doItemGroups();
     });
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = (data: any, sortHeaderId: string): string => {
+      if (typeof data[sortHeaderId] === 'string') {
+        return data[sortHeaderId].toLocaleLowerCase();
+      }
+      return data[sortHeaderId];
+    }
   }
 
   doItemGroups() {
@@ -109,27 +136,9 @@ export class Purchase implements AfterViewInit, OnInit {
       });
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    this.sort.active = 'item_name';
-    this.sort.direction = 'asc';
-    this.sort.sortChange.emit({
-      active: this.sort.active,
-      direction: this.sort.direction
-    });
-    this.dataSource.sortingDataAccessor = (data: any, sortHeaderId: string): string => {
-      if (typeof data[sortHeaderId] === 'string') {
-        return data[sortHeaderId].toLocaleLowerCase();
-      }
-      return data[sortHeaderId];
-    }
-  }
-
-
   loadData(){ //get items of purchase
     if(!this.purchaseId) return;
-    this.singlePurchase.getPurchase(this.purchaseId).subscribe( res => {
+    this.singlePurchase.getPurchaseItems(this.purchaseId).subscribe( res => {
 
       this.pageData = (res as IPurchaseItem[]).map( p => ({
         ...p,

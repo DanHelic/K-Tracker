@@ -55,7 +55,7 @@ export async function getPurchaseByIdNoItems(purchase_id_: number, user_id_: num
         purchase_id: true,
         user_id: true,
         purchased_at: true,
-        store_id: true,
+        store: true,
         total_price: true,
         item_count: true,
         purchase_name: true

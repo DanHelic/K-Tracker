@@ -61,27 +61,29 @@
   
     <div class="searchAndButtons">
       <div class="search">
-        <mat-form-field class="input-field" style="width: 100">
+        <mat-form-field class="input-field" style="width: calc(100% - 10px)">
           <mat-label>Suchen</mat-label>
           <input matInput (input)="applySearch($event)" #input>
         </mat-form-field>
       </div>
 
-      <button matFab extended class="addReset" (click)="saveOrCreate()">
-        <mat-icon>add</mat-icon>
-        Speichern / hinzufügen
-      </button>
+      <div class="addResetButtons">
+        <button matFab extended class="addReset" (click)="saveOrCreate()">
+          <mat-icon>add</mat-icon>
+          Speichern / hinzufügen
+        </button>
 
-      <button matFab extended class="addReset" (click)="reset()">
-        <mat-icon>remove</mat-icon>
-        Zurücksetzen
-      </button>
+        <button matFab extended class="addReset" (click)="reset()">
+          <mat-icon>remove</mat-icon>
+          Zurücksetzen
+        </button>
+      </div>
     </div>
 
   </div>
 
   <div class="table-wrapper mat-elevation-z8">
-    <table mat-table [dataSource]="dataSource" matSort [matSortDisableClear]="true">
+    <table mat-table [dataSource]="dataSource" matSort [matSortDisableClear]="true" matSortActive="item_name" matSortDirection="asc">
 
       <ng-container matColumnDef="item_name">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
@@ -118,6 +120,11 @@
       </tr>
     </table>
 
-    <mat-paginator [length]="totalItems" [pageSize]="pageSize" [pageSizeOptions]="[15, 25, 50, 100]" aria-label="Select page of users"></mat-paginator>
+    <div class="paginator-wrapper">
+      <div class="purchase-info">
+        <label style="padding-left: 5px;">{{purchaseName+" - "+purchaseDate+" - "+purchaseStore?.name}}</label>
+      </div>
+      <mat-paginator [length]="totalItems" [pageSize]="pageSize" [pageSizeOptions]="[15, 25, 50, 100]" aria-label="Select page of users"></mat-paginator>
+    </div>
   </div>
 </div>

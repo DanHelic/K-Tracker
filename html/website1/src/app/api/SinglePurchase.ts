@@ -11,8 +11,12 @@ export class SinglePurchase {
 
   constructor(private http: HttpClient, private auth: Auth) {}
 
-  getPurchase(purchase_id: number) {
+  getPurchaseItems(purchase_id: number) {
     return this.http.get('/api/purchaseItem/purchaseItemByPurchase/'+purchase_id);
+  }
+
+  getPurchase(purchase_id: number) {
+    return this.http.get('/api/purchase/purchaseWithoutItems/'+purchase_id);
   }
 
   getAllItems() {

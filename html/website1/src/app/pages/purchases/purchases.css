@@ -71,6 +71,7 @@ table {
 }
 
 mat-paginator {
+  border-top: 1px solid;
   position: sticky;
   bottom: 0;
 }
